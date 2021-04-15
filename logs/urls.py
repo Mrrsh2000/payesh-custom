@@ -1,5 +1,5 @@
 from .views import *
-from abresani.dynamic import *
+from payesh.dynamic import *
 from .models import *
 
 urlpatterns = [

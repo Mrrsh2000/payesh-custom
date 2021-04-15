@@ -1,5 +1,5 @@
-from abresani.dynamic import api_error_creator
-from abresani.dynamic_api import DynamicSerializer
+from payesh.dynamic import api_error_creator
+from payesh.dynamic_api import DynamicSerializer
 from settings.models import *
 
 

@@ -24,9 +24,9 @@ from django.views.generic import CreateView, UpdateView
 from django.views.generic.base import TemplateView
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
-from abresani.dynamic_api import CustomValidation
-from abresani.logging import log
-from abresani.utils import LoginRequiredMixin, CustomPermissionRequiredMixin, custom_change_date
+from payesh.dynamic_api import CustomValidation
+from payesh.logging import log
+from payesh.utils import LoginRequiredMixin, CustomPermissionRequiredMixin, custom_change_date
 
 pattern_date = re.compile(r'(\d+/\d+/\d+)')
 

@@ -5,7 +5,6 @@ from django.views import View
 from rest_framework import permissions
 from rest_framework.views import APIView
 
-from data.models import CustomWaterNeed, ReplaceTanker, HouseSourceNeed, WaterNetworkNeed, Season
 from settings.models import *
 from user.models import User
 
@@ -182,32 +181,3 @@ class ExcelFilterSelect2(APIView):
             'values': [self.get_text(obj) for obj in self.get_model()]
         })
 
-
-class SeasonSelect2(DynamicSelect2):
-
-    def get_model(self):
-        bahar, x = Season.objects.get_or_create(title='بهار')
-        tabestan, x = Season.objects.get_or_create(title='تابستان')
-        paeez, x = Season.objects.get_or_create(title='پاییز')
-        zemestan, x = Season.objects.get_or_create(title='زمستان')
-        return Season.objects.all()
-
-
-class ReplaceTankerStrSelect2(DynamicSelect2):
-    model = ReplaceTanker
-    string = True
-
-
-class CustomWaterNeedStrSelect2(DynamicSelect2):
-    model = CustomWaterNeed
-    string = True
-
-
-class HouseSourceNeedStrSelect2(DynamicSelect2):
-    model = HouseSourceNeed
-    string = True
-
-
-class WaterNetworkNeedStrSelect2(DynamicSelect2):
-    model = WaterNetworkNeed
-    string = True

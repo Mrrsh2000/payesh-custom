@@ -11,8 +11,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from abresani.logging import log
-from abresani.utils import LoginRequiredMixin, checkEmail, getToken
+from payesh.logging import log
+from payesh.utils import LoginRequiredMixin, checkEmail, getToken
 from user.models import User
 import re
 

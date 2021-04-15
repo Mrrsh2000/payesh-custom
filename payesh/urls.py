@@ -1,4 +1,4 @@
-"""abresani URL Configuration
+"""payesh URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -22,7 +22,7 @@ from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-from abresani import settings
+from payesh import settings
 # from user.views import ChangePasswordViewTemplateView
 from .views import *
 from django.contrib import admin
@@ -41,7 +41,7 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
-handler404 = 'abresani.views.my_custom_page_not_found_view'
+handler404 = 'payesh.views.my_custom_page_not_found_view'
 
 urlpatterns = [
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
@@ -59,14 +59,12 @@ urlpatterns = [
     path('logout/', UserLogout.as_view(), name='user_logout'),
     # API URLS
     path('api/v1/', include('user.routers')),
-    path('api/v1/', include('data.routers')),
-    path('api/v1/select2/', include('abresani.select2_urls')),
+    path('api/v1/select2/', include('payesh.select2_urls')),
     # Modules URLS
     path('', index, name='index'),
     path('user/', include('user.urls')),
     path('logs/', include('logs.urls')),
     path('settings/', include('settings.urls')),
-    path('data/', include('data.urls')),
     path('api/v1/', include('settings.routers')),
     path('api/v1/', include('logs.routers')),
     # API URLS

@@ -1,8 +1,8 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from abresani.dynamic import api_error_creator
-from abresani.dynamic_api import DynamicSerializer
+from payesh.dynamic import api_error_creator
+from payesh.dynamic_api import DynamicSerializer
 from user.models import User
 
 

@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 from django.contrib import messages
-from abresani.dynamic import *
+from payesh.dynamic import *
 from settings.views import *
 import pandas
 

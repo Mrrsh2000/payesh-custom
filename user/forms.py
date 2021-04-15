@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.forms.models import ModelForm
 
-from abresani.dynamic import dynamic_form
+from payesh.dynamic import dynamic_form
 from user.models import User
 
 

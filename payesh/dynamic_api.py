@@ -11,8 +11,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from abresani.logging import log
-from abresani.utils import custom_change_date
+from payesh.logging import log
+from payesh.utils import custom_change_date
 
 
 def replace_star(key, dictionary):

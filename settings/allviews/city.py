@@ -4,7 +4,7 @@
 آخرین وضیعت ها استفاده میشود.
 
 """
-from abresani.dynamic import *
+from payesh.dynamic import *
 from settings.models import City
 from settings.views import *
 

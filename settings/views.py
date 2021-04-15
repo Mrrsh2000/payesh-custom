@@ -1,7 +1,7 @@
 from django.db.models import Q
 
-from abresani.dynamic import DynamicCreateView, DynamicUpdateView
-from abresani.dynamic_api import DynamicModelApi
+from payesh.dynamic import DynamicCreateView, DynamicUpdateView
+from payesh.dynamic_api import DynamicModelApi
 from settings.serializers import *
 
 

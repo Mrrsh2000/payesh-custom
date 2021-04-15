@@ -14,9 +14,9 @@ from django.db.models import Q
 from django.apps import apps
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from abresani.settings import JWT_AUTH
+from payesh.settings import JWT_AUTH
 
-from abresani.logging import log
+from payesh.logging import log
 from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template

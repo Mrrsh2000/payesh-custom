@@ -1,5 +1,5 @@
-from abresani.dynamic import DynamicListView
-from abresani.dynamic_api import DynamicModelReadOnlyApi
+from payesh.dynamic import DynamicListView
+from payesh.dynamic_api import DynamicModelReadOnlyApi
 from logs.models import Log
 
 

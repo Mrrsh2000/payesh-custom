@@ -7,10 +7,10 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from abresani.dynamic import DynamicCreateView, DynamicListView, DynamicUpdateView
-from abresani.dynamic_api import DynamicModelApi, CustomValidation
-from abresani.logging import log
-from abresani.utils import PermissionsApi
+from payesh.dynamic import DynamicCreateView, DynamicListView, DynamicUpdateView
+from payesh.dynamic_api import DynamicModelApi, CustomValidation
+from payesh.logging import log
+from payesh.utils import PermissionsApi
 from user.forms import user_form
 from user.models import User
 from user.serializers import UserCreateSerializer
