@@ -1,0 +1,263 @@
+{% extends 'base.html' %}{% load static %}{% load widget_tweaks %}
+{% block body %}
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!--begin::Card-->
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                لیست
+                                {{ model_name }}
+                            </h3>
+                            <div class="card-toolbar">
+                                <button id="excel_output" class="btn btn-icon btn-primary" type="button"
+                                        data-toggle="tooltip"
+                                        data-theme="dark" title="خروجی اکسل">
+                                    <i class="fa fa-file-excel"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                            <form class="filters">
+
+                                <div class="row">
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                شهر:
+                                            </label>
+                                            {% render_field filter.form.village__father__father__father__title class='form-control' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                بخش:
+                                            </label>
+                                            {% render_field filter.form.village__father__father__title class='form-control' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                دهستان:
+                                            </label>
+                                            {% render_field filter.form.village__father__title class='form-control' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                روستا:
+                                            </label>
+                                            {% render_field filter.form.village__title class='form-control' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                ثبت کننده:
+                                            </label>
+                                            {% render_field filter.form.user class='form-control' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                دسترسی به آب نسبت به جمیعت:
+                                            </label>
+                                            {% render_field filter.form.is_access_to_water class='form-control' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                تعداد در صفحه:
+                                            </label>
+                                            <select id="id_table_length" aria-controls="table"
+                                                    class="form-control">
+                                                <option selected value="10">10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group ">
+                                            <div class="col-12 text-left">
+                                                <button type="button"
+                                                        class="btn btn-primary btn-sm btn-icon-sm"
+                                                        id="btn_filter">
+                                                    جستجو<i class="flaticon-search mr-2"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            {% if not disableTable %}
+                                <table class="table table-separate table-head-custom dataTable no-footer"
+                                       id="table">
+                                    <thead>
+                                    {% for field in cols %}
+                                        <th>{{ field }}</th>
+                                    {% endfor %}
+                                    <th>عملیات</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-none" id="export_excel">
+
+                        </div>
+                    </div>
+                    <!--end::Card-->
+                </div>
+            </div>
+        </div>
+        <!--end::Container-->
+    </div>
+
+
+{% endblock %}
+{% block script %}
+    <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/js/datatable.js' %}" type="text/javascript"></script>
+
+    <script>
+        let table;
+        window.data_table_cool_options['lengthChange'] = false;
+        window.data_table_cool_options['searching'] = false;
+        table = datatable_simple_show({
+            {#extras: [naviItem('نمایش پیوست الزام', 'far fa-file-archive', 'pyvast_elzam'), naviItem('اطلاعات محصول', 'fas fa-info', 'info_mahsol_elzam'), naviItem('اطلاعات الزام', 'fas fa-info-circle', 'info_elzam')],#}
+            url: WATER_API_DATATABLE_URL,
+            real_cols: {{cols|length}},
+            hide_id: true,
+            loading_all: true,
+            responsive: true,
+            datable_id: '#table',
+            del_url: WATER_API_DELETE_URL,
+            up_url: WATER_UPDATE_TEMPLATE,
+            extra_del_params: {
+                ajax: true,
+            },
+            extra_filters: function (d) {
+                $('.filters input, .filters select').each(function (i, e) {
+                    d[e.getAttribute('name')] = $(e).val();
+                })
+            },
+
+        }, {
+            rowCallback: function (row, data) {
+                for (let value in data) {
+                    if (data[value] === "bool-true")
+                        $(`td:eq(${value - 1})`, row).html(`<button type="button" class="btn btn-sm btn-primary noHover btn-circle btn-icon"><i class="fa fa-check"></i></button>`)
+                    else if (data[value] === "bool-false")
+                        $(`td:eq(${value - 1})`, row).html(`<button type="button" class="btn btn-sm btn-danger noHover btn-circle btn-icon"><i class="fa fa-times"></i></button>`)
+                    if (data[value] === "file-null")
+                        $(`td:eq(${value - 1})`, row).html(`<label class="btn btn-secondary btn-sm btn-pill noHover">ندارد</label>`)
+                    else if (data[value].startsWith('/media/'))
+                        $(`td:eq(${value - 1})`, row).html(`<a download href="${data[value]}" class="btn btn-primary btn-circle btn-icon" title="جهت دریافت فایل کلیک کنید"><i class="fa fa-download"></i></a>`)
+                }
+                boldCol(1, row, data[2])
+                $(`td:last`, row).prepend(`<a href="/data/water/${data[0]}" data-skin="dark" data-toggle="tooltip" data-placement="top" title="" data-original-title="مشاهده" class="btn btn-light-primary btn-sm btn-icon ml-2" title="جهت دریافت فایل کلیک کنید"><span class="svg-icon svg-icon-md">{% include 'shared/svg/file.html' %}</span></a>`)
+
+
+            },
+
+        });
+
+        $('select').select2({
+            dir: "rtl"
+        });
+        $('#btn_filter').click(function () {
+            table.page.len(parseInt($('#id_table_length').val())).draw();
+        });
+
+        $('#excel_output').click(function (e) {
+            let datas = table.rows().data();
+
+            ApiAjaxReader({
+                url: SELECT2_EXCEL,
+                method: 'POST',
+                data: getFormData('.filters'),
+                success: function (res) {
+                    console.log(res)
+                    let heads = ['شناسه', 'روستا ', 'ثبت کننده ', 'جمیعت ', 'دسترسی به آب نسبت به جمیعت ', 'زمان ثبت ',
+                        'مختصات lat',
+                        'مختصات long',
+                        'آیا در روستا کشاورزی صورت می پذیرد؟',
+                        'آیا اهالی روستا دامپروری دارند؟',
+                        'منبع فعلی تامین آب',
+                        'نام مجتمع آبرسانی',
+                        'مختصات lat مجتمع آبرسانی',
+                        'مختصات long مجتمع آبرسانی',
+                        'مخزن ذخیره تامین آب روستا',
+                        'منبع تغذیه مخزن',
+                        'نوع منبع فصلی',
+                        'طول مدت بهره برداری منبع فصلی',
+                        'فصل منبع فصلی',
+                        'منبابع پیشنهادی با توجه به موقعیت جغرافیایی و گفت وگو با اهالی',
+                        'سایر نیازمندی های مرتبط با تامین آب در روستا',
+                        'آیا روستا شبکه توزیع آب دارد؟',
+                        'آیا در روستا خط اصلی توزیع احداث شده است؟',
+                        'آیا روستا نیازمند احداث شبکه توزیع است؟',
+                        'آیا شبکه انشعابات همه خانوارها احداث شده است؟',
+                        'تعداد خانه های نیازمند به احداث انشعاب',
+                        'آیا روستا مخزن ذخیره آب دارد؟',
+                        'آیا مخزن آب سالم است؟',
+                        'ظرفیت ذخیره مخزن (بر حسب متر مکعب)؟',
+                        'آیا این مخزن با روستاهای دیگر مشترک است؟',
+                        'آیا هرکدام از روستاهایی که از این مخزن استفاده می کنند خط انتقال جداگانه دارند؟',
+                        'با توجه به شرایط، نیاز به احداث خط انتقال برای هر روستا به صورت جداگانه است؟',
+                        'آیا روستا نیازمند احداث خط انتقال از مخزن است؟',
+                        'آیا خط انتقال از منبع به درون روستا نیازمند بهسازی و تعویض است؟',
+                        'آیا روستا نیازمند احداث مخزن است؟',
+                        'آیا اهالی روستا در خانه های خود مخزن ذخیره آب دارند؟',
+                        'مخزن ذخیره آب هر چند روز یکبار پر می شود؟',
+                        'مخازن به چه وسیله ای پر می شوند؟',
+                        'ضرورت استفاده از مخازن ذخیره خانگی',
+                        'سایر نیازمندی های روستا در بخش شبکه توزیع آب',].map(
+                        e => '<th>' + e + '</th>'
+                    );
+                    let body = [];
+                    for (let x = 0; x < datas.length; x++)
+                        body.push(`<tr class="text-center">${datas[x].map(td => `<td>${td}</td>`).join('').replaceAll('bool-true', 'بله').replaceAll('bool-false', 'خیر').replaceAll('False', '')}</tr>`);
+
+                    for (let i of res.values) {
+                        body.push(`<tr class="text-center"><td>-</td><td>${i}</td>${'<td></td>'.repeat(38)}</tr>`)
+                    }
+                    let tableHTML = `<table id="table2" class="table table-bordered"
+       style="white-space: nowrap; vertical-align: middle">
+    <thead class="text-center">
+    <tr>
+        ${heads.join(' ')}
+    </tr>
+    </thead>
+    <tbody>
+            ${body.join(' ')}
+    </tbody>
+</table>
+`;
+                    document.getElementById('export_excel').innerHTML = tableHTML
+                    $('#table2 td').attr('align', "center").attr("valign", "middle").css('vertical-align', 'middle').attr('height', "40");
+                    $('#table2 thead td').css('font-weight', 'bolder')
+                    tableToExcel('table2', 'report-forms', 'forms')
+                }
+            })
+
+        })
+
+
+    </script>
+{% endblock %}

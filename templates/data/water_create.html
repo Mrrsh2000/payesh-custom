@@ -1,0 +1,1306 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block css %}
+    <link rel="stylesheet" href="/static/assets/css/leaflet.css"/>
+{% endblock %}
+{% block body %}
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!--begin::Card-->
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                افزودن
+                                {{ model_name }}
+                            </h3>
+                            <div class="card-toolbar">
+                                <div class="example-tools justify-content-center">
+                                    <span class="example-toggle" data-toggle="tooltip" title="View code"></span>
+                                    <span class="example-copy" data-toggle="tooltip" title="Copy code"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--begin::Form-->
+                        <form class="form" id="form" method="POST">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                شهرستان
+                                            </label>
+                                            <select required name="city" id="id_city">
+                                                <option value="">-------</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                بخش
+                                            </label>
+                                            <select required name="part" id="id_part">
+                                                <option value="">-------</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                دهستان
+                                            </label>
+                                            <select required name="town" id="id_town">
+                                                <option value="">-------</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.village.help_text and form.village.help_text != '' %}
+                                                    {{ form.village.help_text }}{% else %}{{ form.village.label }}:
+                                                {% endif %}
+                                            </label>
+                                            {{ form.village }}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <div class="w-100 h-500px position-relative" id="mapdiv"></div>
+                                        <div class="row mt-7">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="font-weight-bolder font-size-lg">
+                                                        {% if form.population.help_text and form.population.help_text != '' %}
+                                                            {{ form.population.help_text }}{% else %}{{ form.population.label }}
+                                                            :
+                                                        {% endif %}
+                                                    </label>
+                                                    {{ form.population }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="font-weight-bolder font-size-lg">
+                                                        مختصات lat ( نقطه مورد نظر را از نقشه انتخاب کنید )
+                                                    </label>
+                                                    {{ form.coordinate_x }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="font-weight-bolder font-size-lg">
+                                                        مختصات long ( نقطه مورد نظر را از نقشه انتخاب کنید )
+                                                    </label>
+                                                    {{ form.coordinate_y }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_farming.help_text and form.is_farming.help_text != '' %}
+                                                    {{ form.is_farming.help_text }}{% else %}{{ form.is_farming.label }}
+                                                    :
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_farming.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_farming.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_farming.field.required %}required{% endif %}
+                                                                    name="{{ form.is_farming.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_farming }}{% endif %}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_livestock.help_text and form.is_livestock.help_text != '' %}
+                                                    {{ form.is_livestock.help_text }}{% else %}{{ form.is_livestock.label }}
+                                                    :
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_livestock.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_livestock.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_livestock.field.required %}required{% endif %}
+                                                                    name="{{ form.is_livestock.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_livestock }}{% endif %}</div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_access_to_water.help_text and form.is_access_to_water.help_text != '' %}
+                                                    {{ form.is_access_to_water.help_text }}{% else %}
+                                                    {{ is_access_to_water.label }}:
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_access_to_water.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_access_to_water.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_access_to_water.field.required %}required{% endif %}
+                                                                    v-model="{{ form.is_access_to_water.name }}"
+                                                                    name="{{ form.is_access_to_water.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_access_to_water }}{% endif %}</div>
+                                    </div>
+                                    <div class="row border border-1 border-success rounded p-5 w-100 mx-10 mb-10"
+                                         :class="{'d-none' : is_access_to_water !== 'True' }">
+                                        <div class="col-xl-12">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.water_source.help_text and form.water_source.help_text != '' %}
+                                                        {{ form.water_source.help_text }}{% else %}{{ form.water_source.label }}
+                                                        :
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.water_source.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.water_source.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-lg-3 col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.water_source.field.required %}required{% endif %}
+                                                                        v-model="{{ form.water_source.name }}"
+                                                                        @change="map2Handler"
+                                                                        name="{{ form.water_source.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.water_source }}{% endif %}</div>
+                                        </div>
+                                        <div :class="{'d-none' : water_source !== '5' || is_access_to_water === 'False'}"
+                                             class="col-xl-12">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.water_source_title.help_text and form.water_source_title.help_text != '' %}
+                                                        {{ form.water_source_title.help_text }}{% else %}
+                                                        {{ water_source_title.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.water_source_title.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.water_source_title.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.water_source_title.field.required %}required{% endif %}
+                                                                        name="{{ form.water_source_title.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.water_source_title }}{% endif %}</div>
+                                        </div>
+
+                                        <div class="row col-12"
+                                             :class="{'d-none' : water_source !== '5' || is_access_to_water === 'False'}">
+                                            <div class="w-100 h-500px position-relative mb-10" id="mapdiv2"></div>
+                                            <div class="col-xl-6">
+                                                <div class="form-group">
+                                                    <label class="font-weight-bolder font-size-lg">
+                                                        {% if form.water_source_coordinate_x.help_text and form.water_source_coordinate_x.help_text != '' %}
+                                                            {{ form.water_source_coordinate_x.help_text }}{% else %}
+                                                            {{ water_source_coordinate_x.label }}:
+                                                        {% endif %}
+                                                        ( نقطه مورد نظر را از نقشه انتخاب کنید )
+                                                    </label>
+                                                    {% if form.water_source_coordinate_x.field.widget.input_type == 'radio' %}
+                                                        <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                            {% for radio in form.water_source_coordinate_x.field.choices %}
+                                                                {% if radio.1 != '---------' %}
+                                                                    <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                            value="{{ radio.0 }}" type="radio"
+                                                                            {% if form.water_source_coordinate_x.field.required %}required{% endif %}
+                                                                            name="{{ form.water_source_coordinate_x.name }}"><span
+                                                                            class=""></span>{{ radio.1 }}</label>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.water_source_coordinate_x }}{% endif %}</div>
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <div class="form-group">
+                                                    <label class="font-weight-bolder font-size-lg">
+                                                        {% if form.water_source_coordinate_y.help_text and form.water_source_coordinate_y.help_text != '' %}
+                                                            {{ form.water_source_coordinate_y.help_text }}{% else %}
+                                                            {{ water_source_coordinate_y.label }}:
+                                                        {% endif %}
+                                                        ( نقطه مورد نظر را از نقشه انتخاب کنید )
+                                                    </label>
+                                                    {% if form.water_source_coordinate_y.field.widget.input_type == 'radio' %}
+                                                        <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                            {% for radio in form.water_source_coordinate_y.field.choices %}
+                                                                {% if radio.1 != '---------' %}
+                                                                    <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                            value="{{ radio.0 }}" type="radio"
+                                                                            {% if form.water_source_coordinate_y.field.required %}required{% endif %}
+                                                                            name="{{ form.water_source_coordinate_y.name }}"><span
+                                                                            class=""></span>{{ radio.1 }}</label>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.water_source_coordinate_y }}{% endif %}</div>
+                                            </div>
+                                        </div>
+
+                                        <div :class="{'d-none' : water_source !== '5' || is_access_to_water === 'False'}"
+                                             class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.water_source_tank.help_text and form.water_source_tank.help_text != '' %}
+                                                        {{ form.water_source_tank.help_text }}{% else %}{{ form.water_source_tank.label }}
+                                                        :
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.water_source_tank.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.water_source_tank.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.water_source_tank.field.required %}required{% endif %}
+                                                                        name="{{ form.water_source_tank.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.water_source_tank }}{% endif %}</div>
+                                        </div>
+                                        <div :class="{'d-none' : water_source !== '5' || is_access_to_water === 'False'}"
+                                             class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.water_source_filler.help_text and form.water_source_filler.help_text != '' %}
+                                                        {{ form.water_source_filler.help_text }}{% else %}
+                                                        {{ water_source_filler.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.water_source_filler.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.water_source_filler.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.water_source_filler.field.required %}required{% endif %}
+                                                                        name="{{ form.water_source_filler.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.water_source_filler }}{% endif %}</div>
+                                        </div>
+
+                                        <div :class="{'d-none' : water_source !== '6' || is_access_to_water === 'False'}"
+                                             class="col-xl-12">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.replace_tanker.help_text and form.replace_tanker.help_text != '' %}
+                                                        {{ form.replace_tanker.help_text }}{% else %}{{ form.replace_tanker.label }}
+                                                        :
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.replace_tanker.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.replace_tanker.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.replace_tanker.field.required %}required{% endif %}
+                                                                        name="{{ form.replace_tanker.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.replace_tanker }}{% endif %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="row border border-1 border-success rounded p-5 w-100 mx-10 mb-10"
+                                         :class="{'d-none' : is_access_to_water === 'True'}">
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.season_source_type.help_text and form.season_source_type.help_text != '' %}
+                                                        {{ form.season_source_type.help_text }}{% else %}
+                                                        {{ season_source_type.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.season_source_type.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.season_source_type.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.season_source_type.field.required %}required{% endif %}
+                                                                        name="{{ form.season_source_type.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.season_source_type }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.season_source_times.help_text and form.season_source_times.help_text != '' %}
+                                                        {{ form.season_source_times.help_text }}{% else %}
+                                                        {{ season_source_times.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.season_source_times.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.season_source_times.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.season_source_times.field.required %}required{% endif %}
+                                                                        name="{{ form.season_source_times.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.season_source_times }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-12">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.season_sources.help_text and form.season_sources.help_text != '' %}
+                                                        {{ form.season_sources.help_text }}{% else %}{{ form.season_sources.label }}
+                                                        :
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.season_sources.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.season_sources.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.season_sources.field.required %}required{% endif %}
+                                                                        name="{{ form.season_sources.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.season_sources }}{% endif %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.custom_water_need.help_text and form.custom_water_need.help_text != '' %}
+                                                    {{ form.custom_water_need.help_text }}{% else %}{{ form.custom_water_need.label }}
+                                                    :
+                                                {% endif %}
+                                            </label>
+                                            {% render_field form.custom_water_need required="required" %}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_water_network.help_text and form.is_water_network.help_text != '' %}
+                                                    {{ form.is_water_network.help_text }}{% else %}{{ form.is_water_network.label }}
+                                                    :
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_water_network.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_water_network.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_water_network.field.required %}required{% endif %}
+                                                                    name="{{ form.is_water_network.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_water_network }}{% endif %}</div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_main_line_built.help_text and form.is_main_line_built.help_text != '' %}
+                                                    {{ form.is_main_line_built.help_text }}{% else %}
+                                                    {{ is_main_line_built.label }}:
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_main_line_built.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_main_line_built.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_main_line_built.field.required %}required{% endif %}
+                                                                    name="{{ form.is_main_line_built.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_main_line_built }}{% endif %}</div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_main_line_need.help_text and form.is_main_line_need.help_text != '' %}
+                                                    {{ form.is_main_line_need.help_text }}{% else %}{{ form.is_main_line_need.label }}
+                                                    :
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_main_line_need.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_main_line_need.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_main_line_need.field.required %}required{% endif %}
+                                                                    name="{{ form.is_main_line_need.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_main_line_need }}{% endif %}</div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_main_line_for_all.help_text and form.is_main_line_for_all.help_text != '' %}
+                                                    {{ form.is_main_line_for_all.help_text }}{% else %}
+                                                    {{ is_main_line_for_all.label }}:
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_main_line_for_all.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_main_line_for_all.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_main_line_for_all.field.required %}required{% endif %}
+                                                                    name="{{ form.is_main_line_for_all.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_main_line_for_all }}{% endif %}</div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                در صورتیکه بخشی از انشعابات اجرا شده است، تعداد خانه های نیازمند به
+                                                احداث انشعاب را بیان نمایید.
+                                            </label>
+                                            {% if form.need_main_line_count.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.need_main_line_count.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.need_main_line_count.field.required %}required{% endif %}
+                                                                    name="{{ form.need_main_line_count.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.need_main_line_count }}{% endif %}</div>
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_source.help_text and form.is_source.help_text != '' %}
+                                                    {{ form.is_source.help_text }}{% else %}{{ form.is_source.label }}
+                                                    :
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_source.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_source.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_source.field.required %}required{% endif %}
+                                                                    v-model="{{ form.is_source.name }}"
+                                                                    name="{{ form.is_source.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_source }}{% endif %}</div>
+                                    </div>
+
+                                    <div class="row border border-1 border-success rounded p-5 w-100 mx-10 mb-10"
+                                         :class="{'d-none' : is_source !== 'True'}">
+                                        <div class="col-xl-12">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.is_source_healthy.help_text and form.is_source_healthy.help_text != '' %}
+                                                        {{ form.is_source_healthy.help_text }}{% else %}{{ form.is_source_healthy.label }}
+                                                        :
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.is_source_healthy.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.is_source_healthy.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.is_source_healthy.field.required %}required{% endif %}
+                                                                        name="{{ form.is_source_healthy.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.is_source_healthy }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    ظرفیت ذخیره مخزن چه میزان است(بر حسب متر مکعب)؟
+                                                </label>
+                                                {% if form.capacity.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.capacity.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.capacity.field.required %}required{% endif %}
+                                                                        v-model="{{ form.capacity.name }}"
+                                                                        name="{{ form.capacity.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+
+                                                    </div>
+                                                {% else %}{{ form.capacity }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.is_source_common.help_text and form.is_source_common.help_text != '' %}
+                                                        {{ form.is_source_common.help_text }}{% else %}{{ form.is_source_common.label }}
+                                                        :
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.is_source_common.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.is_source_common.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.is_source_common.field.required %}required{% endif %}
+                                                                        v-model="is_source_common"
+                                                                        name="{{ form.is_source_common.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.is_source_common }}{% endif %}
+                                            </div>
+                                        </div>
+
+
+                                        <div :class="{'d-none' : is_source_common !== 'True'}" class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.is_source_common_custom_line.help_text and form.is_source_common_custom_line.help_text != '' %}
+                                                        {{ form.is_source_common_custom_line.help_text }}{% else %}
+                                                        {{ is_source_common_custom_line.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.is_source_common_custom_line.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.is_source_common_custom_line.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.is_source_common_custom_line.field.required %}required{% endif %}
+                                                                        name="{{ form.is_source_common_custom_line.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.is_source_common_custom_line }}{% endif %}</div>
+                                        </div>
+                                        <div :class="{'d-none' : is_source_common !== 'True'}" class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.is_source_custom_line_for_each.help_text and form.is_source_custom_line_for_each.help_text != '' %}
+                                                        {{ form.is_source_custom_line_for_each.help_text }}{% else %}
+                                                        {{ is_source_custom_line_for_each.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.is_source_custom_line_for_each.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.is_source_custom_line_for_each.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.is_source_custom_line_for_each.field.required %}required{% endif %}
+                                                                        name="{{ form.is_source_custom_line_for_each.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.is_source_custom_line_for_each }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.is_source_common_need_line_fix.help_text and form.is_source_common_need_line_fix.help_text != '' %}
+                                                        {{ form.is_source_common_need_line_fix.help_text }}{% else %}
+                                                        {{ is_source_common_need_line_fix.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.is_source_common_need_line_fix.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.is_source_common_need_line_fix.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.is_source_common_need_line_fix.field.required %}required{% endif %}
+                                                                        name="{{ form.is_source_common_need_line_fix.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.is_source_common_need_line_fix }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.is_source_common_need_custom_line.help_text and form.is_source_common_need_custom_line.help_text != '' %}
+                                                        {{ form.is_source_common_need_custom_line.help_text }}{% else %}
+                                                        {{ is_source_common_need_custom_line.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.is_source_common_need_custom_line.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.is_source_common_need_custom_line.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.is_source_common_need_custom_line.field.required %}required{% endif %}
+                                                                        name="{{ form.is_source_common_need_custom_line.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.is_source_common_need_custom_line }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.is_source_common_need_built_source.help_text and form.is_source_common_need_built_source.help_text != '' %}
+                                                        {{ form.is_source_common_need_built_source.help_text }}{% else %}
+                                                        {{ is_source_common_need_built_source.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.is_source_common_need_built_source.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.is_source_common_need_built_source.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.is_source_common_need_built_source.field.required %}required{% endif %}
+                                                                        name="{{ form.is_source_common_need_built_source.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.is_source_common_need_built_source }}{% endif %}</div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.is_people_have_house_source.help_text and form.is_people_have_house_source.help_text != '' %}
+                                                    {{ form.is_people_have_house_source.help_text }}{% else %}
+                                                    {{ is_people_have_house_source.label }}:
+                                                {% endif %}
+                                            </label>
+                                            {% if form.is_people_have_house_source.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.is_people_have_house_source.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.is_people_have_house_source.field.required %}required{% endif %}
+                                                                    v-model="{{ form.is_people_have_house_source.name }}"
+                                                                    name="{{ form.is_people_have_house_source.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.is_people_have_house_source }}{% endif %}</div>
+                                    </div>
+                                    <div class="row border border-1 border-success rounded p-5 w-100 mx-10 mb-10"
+                                         :class="{'d-none' : is_people_have_house_source !== 'True'}">
+                                        <div class="col-xl-4">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.house_source_reload_per_day.help_text and form.house_source_reload_per_day.help_text != '' %}
+                                                        {{ form.house_source_reload_per_day.help_text }}{% else %}
+                                                        {{ house_source_reload_per_day.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.house_source_reload_per_day.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.house_source_reload_per_day.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.house_source_reload_per_day.field.required %}required{% endif %}
+                                                                        name="{{ form.house_source_reload_per_day.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.house_source_reload_per_day }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-4">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.house_source_reload_tool.help_text and form.house_source_reload_tool.help_text != '' %}
+                                                        {{ form.house_source_reload_tool.help_text }}{% else %}
+                                                        {{ house_source_reload_tool.label }}:
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.house_source_reload_tool.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.house_source_reload_tool.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.house_source_reload_tool.field.required %}required{% endif %}
+                                                                        name="{{ form.house_source_reload_tool.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.house_source_reload_tool }}{% endif %}</div>
+                                        </div>
+                                        <div class="col-xl-4">
+                                            <div class="form-group">
+                                                <label class="font-weight-bolder font-size-lg">
+                                                    {% if form.house_source_need.help_text and form.house_source_need.help_text != '' %}
+                                                        {{ form.house_source_need.help_text }}{% else %}{{ form.house_source_need.label }}
+                                                        :
+                                                    {% endif %}
+                                                </label>
+                                                {% if form.house_source_need.field.widget.input_type == 'radio' %}
+                                                    <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                        {% for radio in form.house_source_need.field.choices %}
+                                                            {% if radio.1 != '---------' %}
+                                                                <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                        value="{{ radio.0 }}" type="radio"
+                                                                        {% if form.house_source_need.field.required %}required{% endif %}
+                                                                        name="{{ form.house_source_need.name }}"><span
+                                                                        class=""></span>{{ radio.1 }}</label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.house_source_need }}{% endif %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder font-size-lg">
+                                                {% if form.custom_water_network_need.help_text and form.custom_water_network_need.help_text != '' %}
+                                                    {{ form.custom_water_network_need.help_text }}{% else %}
+                                                    {{ custom_water_network_need.label }}:
+                                                {% endif %}
+                                            </label>
+                                            {% if form.custom_water_network_need.field.widget.input_type == 'radio' %}
+                                                <div class="radio-inline no-form-text border-0 pt-2 row">
+                                                    {% for radio in form.custom_water_network_need.field.choices %}
+                                                        {% if radio.1 != '---------' %}
+                                                            <label class="radio radio-accent radio-success col-4 pb-4"><input
+                                                                    value="{{ radio.0 }}" type="radio"
+                                                                    {% if form.custom_water_network_need.field.required %}required{% endif %}
+                                                                    name="{{ form.custom_water_network_need.name }}"><span
+                                                                    class=""></span>{{ radio.1 }}</label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {% render_field form.custom_water_network_need required="required" %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <a href="{% url 'water_list' %}" class="btn ml-2 btn-secondary">بازگشت</a>
+                                <button type="button" class="btn btn-primary">ثبت فرم</button>
+                            </div>
+                        </form>
+                        <!--end::Form-->
+                    </div>
+                    <!--end::Card-->
+                </div>
+            </div>
+        </div>
+        <!--end::Container-->
+    </div>
+
+
+{% endblock %}
+{% block script %}
+    <script src="/static/vue/vue.js"></script>
+    <script src="/static/assets/js/water.js"></script>
+    <script src="/static/assets/js/leaflet.js"></script>
+    <script>
+        L.Map.addInitHook(function () {
+
+            var that = this
+                , h
+            ;
+
+            if (that.on) {
+                that.on('click', check_later);
+                that.on('dblclick', function () {
+                    setTimeout(clear_h, 0);
+                });
+            }
+
+            function check_later(e) {
+                clear_h();
+
+                h = setTimeout(check, 500);
+
+                function check() {
+                    that.fire('singleclick', L.Util.extend(e, {type: 'singleclick'}));
+                }
+            }
+
+            function clear_h() {
+                if (h != null) {
+                    clearTimeout(h);
+                    h = null;
+                }
+            }
+
+        });
+    </script>
+    <script>
+
+        // create a map
+
+        var div = document.createElement('div');
+        div.setAttribute('style', 'position:absolute;margin:0;padding:0;left:0;top:0;width:100%;height:100%;');
+        document.querySelector('#mapdiv').appendChild(div);
+
+        var map = L.map(div).setView([33.98512239966761, 51.412926271912795], 7);
+
+
+        {#mbAttr = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'#}
+        {#mbUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'#}
+        {##}
+        {#base_layer = L.tileLayer(mbUrl, {id: 'mapbox.streets', attribution: mbAttr})#}
+
+        var openStreetMap = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        openStreetMap.addTo(map);
+
+        // test
+
+        map.on('singleclick', function (e) {
+            $('#id_coordinate_x').val(e.latlng.lat).addClass('border-success')
+            $('#id_coordinate_y').val(e.latlng.lng).addClass('border-success')
+
+            setTimeout(function () {
+                $('#id_coordinate_x').removeClass('border-success')
+                $('#id_coordinate_y').removeClass('border-success')
+            }, 1000);
+            L.popup().setLatLng(e.latlng)
+                .setContent(`<p><label class="label label-inline label-primary mb-5 label-lg">محل انتخاب شد</label><label class="font-weight-bolder" style="direction: ltr">( ${e.latlng.lat} , ${e.latlng.lng} )</label>`)
+                .openOn(map);
+        });
+
+
+        const showSecondMap = () => {
+            setTimeout(function (e) {
+                document.getElementById('mapdiv2').innerHTML = ''
+                const X = L;
+                // create another map
+
+                var div2 = document.createElement('div');
+                div2.setAttribute('style', 'position:absolute;margin:0;padding:0;left:0;top:0;width:100%;height:100%;');
+                document.querySelector('#mapdiv2').appendChild(div2);
+
+                var map2 = X.map(div2).setView([33.98512239966761, 51.412926271912795], 6);
+
+                var openStreetMap2 = X.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                });
+
+                openStreetMap2.addTo(map2);
+
+                // test
+
+                map2.on('singleclick', function (e) {
+                    $('#id_water_source_coordinate_x').val(e.latlng.lat).addClass('border-success')
+                    $('#id_water_source_coordinate_y').val(e.latlng.lng).addClass('border-success')
+
+                    setTimeout(function () {
+                        $('#id_water_source_coordinate_x').removeClass('border-success')
+                        $('#id_water_source_coordinate_y').removeClass('border-success')
+                    }, 1000)
+                    X.popup().setLatLng(e.latlng)
+                        .setContent(`<p><label class="label label-inline label-primary mb-5 label-lg">محل انتخاب شد</label><label class="font-weight-bolder" style="direction: ltr">( ${e.latlng.lat} , ${e.latlng.lng} )</label>`)
+                        .openOn(map2);
+                });
+            }, 1000)
+
+        }
+
+    </script>
+    <script>
+        ApiAjaxReader({
+            url: SELECT2_CITY,
+            method: 'GET',
+        })
+    </script>
+    <script>
+        const formV = FormValidation.formValidation(
+            document.getElementById('form'),
+            {
+                fields: {
+                    first_name: {
+                        validators: {
+                            stringLength: {
+                                max: 20,
+                                min: 2,
+                                message: 'نام باید بین 2 تا 20 کاراکتر باشد!'
+                            },
+                            notEmpty: {
+                                message: 'وارد کردن نام الزامی است!'
+                            },
+                        }
+                    },
+                    last_name: {
+                        validators: {
+                            stringLength: {
+                                max: 20,
+                                min: 2,
+                                message: 'نام باید بین 2 تا 20 کاراکتر باشد!'
+                            },
+                            notEmpty: {
+                                message: 'وارد کردن نام خانوادگی الزامی است!'
+                            },
+                        }
+                    },
+                    password: {
+                        validators: {
+                            stringLength: {
+                                min: 6,
+                                max: 20,
+                                message: 'رمز عبور باید بین 6 تا 20 کاراکتر باشد!'
+                            },
+                            notEmpty: {
+                                message: 'وارد کردن رمز عبور الزامی است!'
+                            },
+                        }
+                    },
+                    repeat_password: {
+                        validators: {
+                            notEmpty: {
+                                message: 'وارد کردن تکرار رمز عبور الزامی است!'
+                            },
+                            callback: {
+                                message: 'رمز عبور با تکرار رمز عبور مطابقت ندارد!',
+                                callback: function (input) {
+                                    return input.value === document.querySelector('#id_password').value
+                                }
+
+                            }
+                        }
+                    },
+                },
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger(),
+                    bootstrap: new FormValidation.plugins.Bootstrap()
+                },
+
+            }
+        );
+        $('.card-footer button').click(function (e) {
+            const button = this;
+            formV.validate().then(function (status) {
+                if (status === 'Valid') {
+                    ApiAjax({
+                        success_url: WATER_CREATE_TEMPLATE,
+                        url: WATER_API_CREATE_URL,
+                        form: 'form',
+                        method: 'POST',
+                        button: button,
+                        success_message: 'فرم با موفقیت ثبت شد!',
+                    })
+                } else {
+                    Swal.fire({
+                        text: "به نظر می رسد تعدادی خطا در اطلاعات شما وجود دارد، لطفا دوباره تلاش کنید.",
+                        icon: "error",
+                        confirmButtonText: "متوجه شدم!",
+                        customClass: {
+                            confirmButton: "btn font-weight-bold btn-secondary"
+                        }
+                    }).then(function () {
+                        KTUtil.scrollTop();
+                    });
+                }
+            });
+        });
+
+        $('select').select2({
+            dir: "rtl",
+        });
+
+        $('#id_city').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                url: SELECT2_CITY,
+                data: function (params) {
+                    var query = {
+
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                    return query;
+                }
+            }
+        }).change(function (e) {
+            $('#id_part').val('').change()
+        })
+        $('#id_part').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                url: SELECT2_PART,
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                        father: $('#id_city').val()
+                    };
+                    return query;
+                }
+            }
+        }).change(function (e) {
+            $('#id_town').val('').change()
+        })
+        $('#id_town').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                url: SELECT2_TOWN,
+
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                        father: $('#id_part').val()
+                    };
+                    return query;
+                }
+            }
+        }).change(function (e) {
+            $('#id_village').val('').change()
+        })
+        $('#id_village').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                url: SELECT2_VILLAGE,
+
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                        father: $('#id_town').val()
+                    };
+                    return query;
+                }
+            }
+        });
+        $('#id_replace_tanker').select2({
+            dir: "rtl",
+            tags: true,
+            placeholder: 'انتخاب یا اضافه کنید با Enter',
+            ajax: {
+                url: SELECT2_REPLACE_TANKER_STR,
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                }
+            }
+        });
+        $('#id_custom_water_need').select2({
+            dir: "rtl",
+            tags: true,
+            placeholder: 'انتخاب یا اضافه کنید با Enter',
+            ajax: {
+                url: SELECT2_CUSTOM_WATER_NEED_STR,
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                }
+            }
+        });
+        $('#id_house_source_need').select2({
+            dir: "rtl",
+            tags: true,
+            placeholder: 'انتخاب یا اضافه کنید با Enter',
+            ajax: {
+                url: SELECT2_HOUSE_SOURCE_NEED_STR,
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                }
+            }
+        });
+        $('#id_custom_water_network_need').select2({
+            dir: "rtl",
+            tags: true,
+            placeholder: 'انتخاب یا اضافه کنید با Enter',
+            ajax: {
+                url: SELECT2_CUSTOM_WATER_NEED_STR,
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                }
+            }
+        });
+        $('#id_season_sources').select2({
+            dir: "rtl",
+            placeholder: 'انتخاب کنید',
+            ajax: {
+                url: SELECT2_SEASON,
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                }
+            }
+        });
+    </script>
+{% endblock %}

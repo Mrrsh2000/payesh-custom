@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!--begin::Card-->
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                جدول
+                                {{ model_name }}
+                            </h3>
+                            <div class="card-toolbar">
+                                <div class="example-tools justify-content-center">
+                                    <button data-skin="dark" data-toggle="modal" data-target="#modal_here"
+                                            title=" افزودن "
+                                            class="btn btn-icon btn-primary btn-sm mr-2"><span
+                                            class="svg-icon svg-icon-md"><!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\themes\metronic\theme\html\demo10\dist/../src/media/svg/icons\Code\Plus.svg--><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px"
+                                            viewBox="0 0 24 24" version="1.1">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect x="0" y="0" width="24" height="24"/>
+        <circle fill="#000000" opacity="0.3" cx="12" cy="12" r="10"/>
+        <path d="M11,11 L11,7 C11,6.44771525 11.4477153,6 12,6 C12.5522847,6 13,6.44771525 13,7 L13,11 L17,11 C17.5522847,11 18,11.4477153 18,12 C18,12.5522847 17.5522847,13 17,13 L13,13 L13,17 C13,17.5522847 12.5522847,18 12,18 C11.4477153,18 11,17.5522847 11,17 L11,13 L7,13 C6.44771525,13 6,12.5522847 6,12 C6,11.4477153 6.44771525,11 7,11 L11,11 Z"
+              fill="#000000"/>
+    </g>
+</svg><!--end::Svg Icon--></span>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--begin::Form-->
+                        <div class="card-body">
+                            {% if not disableTable %}
+                                <table class="table table-separate table-head-custom dataTable no-footer"
+                                       id="table">
+                                    <thead>
+                                    {% for field in cols %}
+                                        <th>{{ field }}</th>
+                                    {% endfor %}
+                                    <th>عملیات</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        </div>
+                        <!--end::Form-->
+                    </div>
+                    <!--end::Card-->
+                </div>
+            </div>
+        </div>
+        <!--end::Container-->
+    </div>
+    <div class="modal fade" id="modal_here" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content border-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ title }}</h5>
+                </div>
+                <form class="kt-form" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                            <div class="kt-portlet__body pb-0 pt-0 pr-0 pl-0">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-lg-3 col-sm-12">شهرستان:</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                <select name="city" id="id_city">
+                                                    <option value="">---------</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-lg-3 col-sm-12">{{ form.father.label }}:</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                <select name="father" id="id_father">
+                                                    <option value="">---------</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-lg-3 col-sm-12">{{ form.title.label }}:</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                {{ form.title }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer p-1">
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">بستن
+                        </button>
+                        <button type="button" id="submitter" class="btn btn-primary">
+                            ثبت {{ model_name }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'assets/plugins/custom/datatables/datatables.bundle.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/js/datatable.js' %}" type="text/javascript"></script>
+    <script>
+
+        $('#id_city').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                url: SELECT2_CITY,
+                data: function (params) {
+                    var query = {
+
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                    return query;
+                }
+            }
+        }).change(function (e) {
+            $('#id_father').val('').change()
+        })
+        $('#id_father').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                url: SELECT2_PART,
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                        father: $('#id_city').val()
+                    };
+                    return query;
+                }
+            }
+        }).change(function (e) {
+        })
+        {% if not disableTable %}
+            window.data_table_cool_options["rowCallback"] = function (row, data) {
+                console.log('row', row)
+                console.log('data', data)
+                for (let value in data) {
+                    if (data[value] === "bool-true")
+                        $(`td:eq(${value - 1})`, row).html(`<button type="button" class="btn btn-success-reverce noHover btn-circle btn-icon"><i class="fa fa-check"></i></button>`)
+                    else if (data[value] === "bool-false")
+                        $(`td:eq(${value - 1})`, row).html(`<button type="button" class="btn btn-danger noHover btn-circle btn-icon"><i class="fa fa-times"></i></button>`)
+                    if (data[value] === "file-null")
+                        $(`td:eq(${value - 1})`, row).html(`<label class="btn btn-secondary btn-sm btn-pill noHover">ندارد</label>`)
+                    else if (data[value].startsWith('/media/'))
+                        $(`td:eq(${value - 1})`, row).html(`<a download href="${data[value]}" class="btn btn-success-reverce btn-circle btn-icon" title="جهت دریافت فایل کلیک کنید"><i class="fa fa-download"></i></a>`)
+                }
+            }
+            var table = datatable_simple_show({
+                {#extras: [naviItem('نمایش پیوست الزام', 'far fa-file-archive', 'pyvast_elzam'), naviItem('اطلاعات محصول', 'fas fa-info', 'info_mahsol_elzam'), naviItem('اطلاعات الزام', 'fas fa-info-circle', 'info_elzam')],#}
+                url: "{{ datatableURL }}",
+                real_cols: {{cols|length}},
+                hide_id: true,
+                loading_all: true,
+                responsive: true,
+                datable_id: '#table',
+                {% if not deleteShow %}
+                    not_delete_able: true,
+                    del_url: '',
+                {% else %}
+                    del_url: '{{deleteURL}}',
+                {% endif %}
+                {% if not editShow %}
+                    not_edit_able: true,
+                    up_url: '',
+                {% else %}
+                    up_url: "{{editURL}}",
+                {% endif %}
+                {% if not deleteShow and not editShow %}
+                    no_action_nutton: true,
+                {% endif %}
+                extra_del_params: {
+                    ajax: true,
+                },
+                extra_filters: function (d) {
+                    d.filter_type = true;
+                },
+            });
+
+        {% endif %}
+
+    </script>
+    <script>
+        $('#submitter').click(function (e) {
+            const button = this;
+            ApiAjax({
+                url: '{{ createURL }}',
+                form: 'form',
+                method: 'POST',
+                button: button,
+                table: table,
+                modal: '#modal_here',
+                success_message: '{{ model_name }} با موفقیت ایجاد شد!'
+            })
+        })
+
+    </script>
+{% endblock %}

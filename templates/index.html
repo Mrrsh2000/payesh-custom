@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+{% endblock %}
+{% block body %}
+    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+        <!--begin::Entry-->
+        <div class="d-flex flex-column-fluid">
+            <!--begin::Container-->
+            <div class="container">
+                <!--begin::Dashboard-->
+                <!--begin::Row-->
+            </div>
+            <!--end::Container-->
+        </div>
+        <!--end::Entry-->
+    </div>
+{% endblock %}
+{% block script %}
+
+    <!--begin::Page Scripts(used by this page)-->
+    <script src="assets/js/pages/widgets.js"></script>
+    <script>
+        ApiAjaxReader({
+            url: SELECT2_CITY,
+            method: 'GET',
+        })</script>
+{% endblock %}

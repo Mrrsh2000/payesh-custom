@@ -1,0 +1,62 @@
+
+.image-field-1:hover .image-field-hover {
+    opacity: 1;
+}
+
+
+.image-field-1 {
+    position: relative;
+    width: 180px;
+    text-align: center;
+    border-radius: 50%;
+    margin: auto;
+    border: 5px solid #ffb12e;
+}
+
+.image-field-hover {
+    opacity: 0;
+}
+
+.image-field-img {
+    display: block;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+}
+.image-field-1-img-holder{
+    border-radius: 50%;
+    width: 170px;
+    height: 170px;
+    border: 3px solid #fff;
+    background: #ffffff;
+}
+.image-field-hover {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .4s ease;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+}
+
+.image-field-hover > div {
+    color: #ffb12e;
+    font-size: x-large;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    z-index: 5;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.image-field-hover i {
+    color: #ffb12e;
+    font-size: large;
+}

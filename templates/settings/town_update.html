@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!--begin::Card-->
+                    <div class="card card-custom">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                ویرایش
+                                {{ model_name }}
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-lg-3 col-sm-12">شهرستان:</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12">
+                                                    <select name="city" id="id_city">
+                                                        <option value="{{ city.id }}">{{ city.title }}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-lg-3 col-sm-12">{{ form.father.label }}:</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12">
+                                                    {{form.father}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-lg-3 col-sm-12">{{ form.title.label }}:</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12">
+                                                    {{ form.title }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="{{ back }}" class="btn ml-2 btn-secondary">بازگشت</a>
+                                    <button type="button" id="submitter" class="btn btn-primary">
+                                        ویرایش
+                                        {{ model_name }}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Container-->
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        $('#submitter').click(function (e) {
+            const button = this;
+            ApiAjax({
+                url: '{{ updateApiURL }}',
+                form: 'form',
+                method: 'PUT',
+                button: button,
+                success_url: '{{ successURL }}',
+                success_message: '{{ model_name }} با موفقیت ویرایش شد!',
+                error: function (e) {
+                    console.log(e)
+                }
+            })
+        })
+
+        $('#id_city').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                url: SELECT2_CITY,
+                data: function (params) {
+                    var query = {
+
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                    return query;
+                }
+            }
+        }).change(function (e) {
+            $('#id_father').val('').change()
+        })
+        $('#id_father').select2({
+            dir: "rtl",
+            placeholder: 'جهت انتخاب کلیک کنید!',
+            ajax: {
+                headers: {
+                    'Authorization': localStorage.getItem('session_key'),
+                    'Content-Type': 'application/json'
+                },
+                url: SELECT2_PART,
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                        father: $('#id_city').val()
+                    };
+                    return query;
+                }
+            }
+        }).change(function (e) {
+        })
+    </script>
+{% endblock %}

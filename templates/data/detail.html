@@ -1,0 +1,856 @@
+{% extends 'base.html' %}{% load static %}{% load widget_tweaks %}
+{% block body %}
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container form-loading" id="vue-selector">
+            {% include 'shared/loading-1.html' %}
+            <div class="row">
+                <div class="col-md-12">
+                    <!--begin::Card-->
+                    <div class="card gutter-b card-custom bg-diagonal bg-diagonal-primary bg-diagonal-r-dark">
+                        <div class="card-body py-10" style="z-index: 1;">
+                            <div class="row justify-content-between text-white text-center">
+                                <div class="col-md-6 ">
+                                    <h4>
+                                        اطلاعات فرم آب رسانی روستا
+                                        <template v-if="data.village">
+                                            [[data.village.title]]
+                                        </template>
+                                    </h4>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>
+                                        ثبت کننده:
+                                        [[data.user.first_name]] [[data.user.last_name]]
+                                    </h4>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="card gutter-b card-custom bg-secondary">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-3 col-6 mb-2">
+                                                    <div class="d-flex justify-content-center">
+
+                                                        <p class="mb-0 font-weight-bolder">
+                                                            شهرستان:
+                                                        </p>
+                                                        <p class="mb-0 mr-2">
+                                                            <template v-if="data.village">
+                                                                [[data.village.father.father.father.title]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-3 col-6 mb-2">
+                                                    <div class="d-flex justify-content-center">
+
+                                                        <p class="mb-0 font-weight-bolder">
+                                                            بخش:
+                                                        </p>
+                                                        <p class="mb-0 mr-2">
+                                                            <template v-if="data.village">
+                                                                [[data.village.father.father.title]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-3 col-6 mb-2">
+                                                    <div class="d-flex justify-content-center">
+
+                                                        <p class="mb-0 font-weight-bolder">
+                                                            دهستان
+                                                        </p>
+                                                        <p class="mb-0 mr-2">
+                                                            <template v-if="data.village">
+                                                                [[data.village.father.title]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-3 col-6 mb-2">
+                                                    <div class="d-flex justify-content-center">
+
+                                                        <p class="mb-0 font-weight-bolder">
+                                                            روستا:
+                                                        </p>
+                                                        <p class="mb-0 mr-2">
+                                                            <template v-if="data.village">
+                                                                [[data.village.title]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-12 mb-2">
+                                                    <div class="d-flex justify-content-center">
+
+                                                        <p class="mb-0 font-weight-bolder">
+                                                            میزان جمیعت ساکن:
+                                                        </p>
+                                                        <p class="mb-0 mr-2">
+                                                            <template v-if="data.village">
+                                                                [[data.population]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-12 mb-2">
+                                                    <div class="d-flex justify-content-center">
+
+                                                        <p class="mb-0 font-weight-bolder">
+                                                            مختصات lat:
+                                                        </p>
+                                                        <p class="mb-0 mr-2">
+                                                            [[data.coordinate_x]]
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-12 mb-2">
+                                                    <div class="d-flex justify-content-center">
+
+                                                        <p class="mb-0 font-weight-bolder">
+                                                            مختصات long:
+                                                        </p>
+                                                        <p class="mb-0 mr-2">
+                                                            [[data.coordinate_y]]
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Card-->
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">
+                                                            آیا در روستا کشاورزی صورت می پذیرد؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_farming)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">
+                                                            آیا اهالی روستا دامپروری دارند؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_livestock)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">
+                                                            آیا روستا با توجه به تعداد جمعیت ساکن به منبع آبی پایدار
+                                                            دسترسی دارد و یا منابع موجود فصلی است؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_access_to_water)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">
+                                                            منبع فعلی تامین آب کدامیک از موارد زیر می باشد؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get_list(WATER_SOURCES,data.water_source)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row col-12">
+                                                    <div class="col-md-12 mt-2">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">
+                                                                نام مجتمع آبرسانی:
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[data.water_source_title]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">
+                                                                مختصات lat مجتمع آبرسانی:
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[data.water_source_coordinate_x]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">
+                                                                مختصات long مجتمع آبرسانی:
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[data.water_source_coordinate_y]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">
+                                                                مخزن ذخیره ای که آب روستا از آن تامین میکند:
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[data.water_source_tank]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">
+                                                                منبع تغذیه مخزن:
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[data.water_source_filler]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row col-12">
+                                                    <div class="col-md-12 mt-2">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">
+                                                                منبابع پیشنهادی خود را با توجه به موقعیت جغرافیایی و گفت
+                                                                وگو با اهالی:
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[m2m(data.replace_tanker)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">
+                                                            در صورت فصلی بودن منبع، نوع منبع را مشخص کنید؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get_list(SEASON_WATER_SOURCES,data.season_source_type)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">
+                                                            در صورت فصلی بودن منبع، طول مدت بهره برداری منبع را مشخص
+                                                            کنید
+                                                            ؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get_list(SEASONS_TIMES,data.season_source_times)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">
+                                                            در صورت فصلی بودن منبع، فصل منبع را مشخص کنید
+                                                            ؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[m2m(data.season_sources)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">سایر نیازمندی های مرتبط با تامین آب در روستا را
+                                                            بیان نمایید</p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[m2m(data.custom_water_need)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">آیا روستا شبکه توزیع آب دارد؟</p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_water_network)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">آیا در روستا خط اصلی توزیع احداث شده است؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_main_line_built)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">آیا روستا نیازمند احداث شبکه توزیع است؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_main_line_need)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">آیا شبکه انشعابات همه خانوارها احداث شده است؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_main_line_for_all)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">در صورتیکه بخشی از انشعابات اجرا شده است، تعداد
+                                                            خانه های نیازمند به احداث انشعاب را بیان نمایید.</p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[data.need_main_line_count]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">آیا روستا مخزن ذخیره آب دارد؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_source)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">آیا اهالی روستا در خانه های خود مخزن ذخیره آب
+                                                            دارند؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_people_have_house_source)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row col-12 mx-1">
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">آیا مخزن آب سالم است؟</p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[get(data.is_source_healthy)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">ظرفیت ذخیره مخزن چه میزان است(بر حسب متر
+                                                                مکعب)؟</p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[data.capacity]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">آیا این مخزن با روستاهای دیگر مشترک
+                                                                است؟</p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[get(data.is_source_common)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                        <div class="row col-12 mx-1">
+                                                            <div class="col-12">
+                                                                <div class="d-flex justify-content-start">
+
+                                                                    <p class="mb-0">آیا هرکدام از روستاهایی که از این
+                                                                        مخزن استفاده می¬کنند خط
+                                                                        انتقال جداگانه دارند؟
+                                                                    </p>
+                                                                    <p class="mb-0 mr-2 font-weight-bolder">
+                                                                        <template v-if="data.village">
+                                                                            [[get(data.is_source_common_custom_line)]]
+                                                                        </template>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="d-flex justify-content-start">
+
+                                                                    <p class="mb-0">
+                                                                        با توجه به شرایط، نیاز به احداث خط انتقال برای
+                                                                        هر
+                                                                        روستا به
+                                                                        صورت جداگانه است؟</p>
+                                                                    <p class="mb-0 mr-2 font-weight-bolder">
+                                                                        <template v-if="data.village">
+                                                                            [[get(data.is_source_custom_line_for_each)]]
+                                                                        </template>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">آیا خط انتقال از منبع به درون روستا نیازمند
+                                                                بهسازی و تعویض است؟ </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[get(data.is_source_common_need_line_fix)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">آیا روستا نیازمند احداث خط انتقال از مخزن
+                                                                است؟
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[get(data.is_source_common_need_custom_line)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">آیا روستا نیازمند احداث مخزن است؟
+                                                            </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[get(data.is_source_common_need_built_source)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">آیا اهالی روستا در خانه های خود مخزن ذخیره آب
+                                                            دارند؟
+                                                        </p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[get(data.is_people_have_house_source)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row col-12 mx-1">
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">هر چند روز یکبار این مخازن پر می شود؟</p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[data.house_source_reload_per_day]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">مخازن به چه وسیله ای پر می شوند؟ </p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[get_list(SOURCE_HOUSE_RELOAD_TOOLS,data.house_source_reload_tool)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-start">
+
+                                                            <p class="mb-0">ضرورت استفاده از مخازن ذخیره خانگی را بیان
+                                                                نمایید.</p>
+                                                            <p class="mb-0 mr-2 font-weight-bolder">
+                                                                <template v-if="data.village">
+                                                                    [[get(data.house_source_need)]]
+                                                                </template>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3 card-custom bg-light">
+                                <div class="card-body p-5">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-start">
+
+                                                        <p class="mb-0">سایر نیازمندی های روستا در بخش شبکه توزیع آب را
+                                                            بیان نمایید</p>
+                                                        <p class="mb-0 mr-2 font-weight-bolder">
+                                                            <template v-if="data.village">
+                                                                [[m2m(data.custom_water_network_need)]]
+                                                            </template>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Container-->
+    </div>
+
+
+
+{% endblock %}
+{% block script %}
+    <script src="{% static 'vue/vue.js' %}" type="text/javascript"></script>
+    <script>
+        const app = new Vue({
+            delimiters: ['[[', ']]'],
+            data() {
+                return {
+                    WATER_SOURCES: {
+                        '1': 'چاه',
+                        '2': 'قنات',
+                        '3': 'چشمه',
+                        '4': 'رودخانه',
+                        '5': 'انشعاب از خط انتقال اصلی',
+                        '6': 'تانکرهای آبرسانی',
+                    },
+                    SOURCE_HOUSE_RELOAD_TOOLS: {
+                        '1': 'شبکه توزیع آب روستا',
+                        '2': 'تانکرهای آبرسانی',
+                    },
+                    SEASON_WATER_SOURCES: {
+                        '1': 'چاه',
+                        '2': 'قنات',
+                        '3': 'چشمه',
+                        '4': 'رودخانه',
+                        '5': 'انشعاب از خط انتقال اصلی',
+                    },
+                    SEASONS: {
+                        '1': 'بهار',
+                        '2': 'تابستان',
+                        '3': 'پاییز',
+                        '4': 'زمستان',
+                    },
+                    SEASONS_TIMES: {
+                        '1': 'یک الی سه ماه',
+                        '2': 'چهار الی هفت ماه',
+                        '3': 'هشت الی یازده ماه',
+                    },
+                    data: {
+                        user: {}
+                        ,
+                        city: {}
+                        ,
+                    }
+                }
+            },
+            el: '#vue-selector',
+            created: function (e) {
+
+                ApiAjaxReader({
+                    url: WATER_API_CREATE_URL + CurrentUrl.split('/')[CurrentUrl.split('/').length - 1],
+                    method: 'GET',
+                    success: (data) => {
+                        this.data = data;
+                        document.getElementById('vue-selector').classList.remove('form-loading')
+                    },
+                    error: function (e) {
+                        swalFireError();
+                    }
+                })
+            },
+            mounted: function () {
+
+            },
+            methods: {
+                get(val) {
+                    if (val === true) {
+                        return 'بله'
+                    } else {
+                        return 'خیر'
+                    }
+                },
+                get_list(lis, key) {
+                    if (lis[key]) {
+                        return lis[key]
+                    } else {
+                        return 'ثبت نشده'
+                    }
+                },
+                m2m(lis) {
+                    let res = '';
+                    if (lis) {
+                        for (const obj in lis) {
+                            res += lis[obj].title + ' - '
+                        }
+                        res = res.slice(0, -3);
+                        return res
+                    }
+                },
+            },
+            computed: {}
+        })
+
+    </script>
+{% endblock %}
