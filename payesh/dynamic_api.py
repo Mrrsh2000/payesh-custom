@@ -112,17 +112,14 @@ class DynamicModelApi(viewsets.ModelViewSet, BaseDatatableView):
         return self.render_to_response(dump)
 
     def check_permissions(self, request):
-        super().check_permissions(request)
         if not self.request.user.is_authenticated:
             self.permission_denied(
                 request, message=getattr('Login Required', 'message', None)
             )
         if self.custom_perms:
             if self.custom_perms.get(self.action):
-                permissonObject = Permission.objects.filter(codename=self.custom_perms.get(self.action)).last()
-                perm = str(self.model._meta).split('.')[0] + '.' + permissonObject.codename
-                if not self.request.user.has_perm(perm):
-                    self.permission_denied(request, message='شما دسترسی {0} را ندارید!'.format(permissonObject.name))
+                if self.request.user.role not in self.custom_perms.get(self.action):
+                    self.permission_denied(request, message='شما دسترسی ندارید!')
 
     def create(self, request, *args, **kwargs):
         if 'create' in self.disables_views:
