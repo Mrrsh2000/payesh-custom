@@ -25,7 +25,7 @@ class User(AbstractUser):
         ('education', 'آموزش'),
         ('admin', 'مدیر گروه'),
     )
-    role = models.IntegerField(unique=True, verbose_name='نوع حساب')
+    role = models.IntegerField(default='student', verbose_name='نوع حساب')
     code_student = models.CharField(max_length=15, null=True, verbose_name='کد دانشجویی')
     code_meli = models.CharField(max_length=11, null=True, verbose_name='کد ملی')
 

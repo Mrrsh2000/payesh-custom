@@ -5,7 +5,6 @@ from django.views import View
 from rest_framework import permissions
 from rest_framework.views import APIView
 
-from settings.models import *
 from user.models import User
 
 

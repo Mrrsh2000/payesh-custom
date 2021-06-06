@@ -143,7 +143,7 @@ class UserViewSet(DynamicModelApi):
 class UserCreateView(DynamicCreateView):
     model = User
     success_url = '/user/list'
-    form = user_form(['username', 'password', 'first_name', 'last_name', 'mobile_number', 'groups'])
+    form = user_form(['username', 'password', 'first_name', 'last_name', 'groups'])
     datatableEnable = False
 
     def get_extra_context(self, context):
@@ -158,7 +158,7 @@ class UserUpdateView(DynamicUpdateView):
     این کلاس برای ویرایش کاربران کاشف استفاده می شود
     """
     model = User
-    form = user_form(['username', 'first_name', 'last_name', 'mobile_number', 'groups', 'is_confirmed'], update=True)
+    form = user_form(['username', 'first_name', 'last_name', 'groups'], update=True)
     success_url = '/user/list'
     template_name = 'user/user_update.html'
 
@@ -168,7 +168,7 @@ class SelfUpdateView(DynamicUpdateView):
     این کلاس برای ویرایش کاربران کاشف استفاده می شود
     """
     model = User
-    form = user_form(['username', 'first_name', 'last_name', 'mobile_number'], update=True)
+    form = user_form(['username', 'first_name', 'last_name'], update=True)
     success_url = '/'
     template_name = 'user/user_update.html'
     extra_context = {
