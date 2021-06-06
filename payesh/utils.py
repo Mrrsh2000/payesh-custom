@@ -2,33 +2,26 @@
 این ماژول شامل توابع و کلاس های کاربردی در نرم
 افزار میشود
 """
+import datetime
 import re
 from random import randint
 
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404
-from django.views import View
-import datetime
-from django.conf import settings
-from django.db.models import Q
 from django.apps import apps
-from rest_framework_simplejwt.tokens import RefreshToken
-
-from payesh.settings import JWT_AUTH
-
-from payesh.logging import log
-from io import BytesIO
-from django.http import HttpResponse
-from django.template.loader import get_template
-
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import AccessMixin
 from django.contrib.auth.models import Permission
-from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import redirect
-
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
+from django.http import Http404
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.views import View
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from payesh.logging import log
 
 
 class CustomAccessMixin(AccessMixin):
@@ -39,31 +32,17 @@ class CustomAccessMixin(AccessMixin):
 
 
 class CustomPermissionRequiredMixin(CustomAccessMixin):
-    """Verify that the current user has all specified permissions."""
     permission_required = None
 
+    def handle_no_permission(self):
+        messages.error(self.request, 'شما به این بخش دسترسی ندارید')
+        return redirect('/')
+
     def get_permission_required(self):
-        """
-        Override this method to override the permission_required attribute.
-        Must return an iterable.
-        """
-        if self.permission_required is None:
-            raise ImproperlyConfigured(
-                '{0} is missing the permission_required attribute. Define {0}.permission_required, or override '
-                '{0}.get_permission_required().'.format(self.__class__.__name__)
-            )
-        if isinstance(self.permission_required, str):
-            perms = (self.permission_required,)
-        else:
-            perms = self.permission_required
-        return perms
+        return self.permission_required
 
     def has_permission(self):
-        """
-        Override this method to customize the way permissions are checked.
-        """
-        perms = self.get_permission_required()
-        return self.request.user.has_perms(perms)
+        return self.request.user.has_role(self.get_permission_required())
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission():

@@ -1,15 +1,9 @@
-from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.views import LoginView
-from django.db.models import Q
-# Create your views here.
-from django_datatables_view.base_datatable_view import BaseDatatableView
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from payesh.dynamic import DynamicCreateView, DynamicListView, DynamicUpdateView
-from payesh.dynamic_api import DynamicModelApi, CustomValidation
+from payesh.dynamic_api import DynamicModelApi
 from payesh.logging import log
-from payesh.utils import PermissionsApi
+from payesh.settings import ROLES_EXCEPT_STUDENT, ROLES_JUST_ADMIN
 from user.forms import user_form
 from user.models import User
 from user.serializers import UserCreateSerializer
@@ -24,33 +18,6 @@ class UserLoginView(LoginView):
     template_name = 'login.html'
 
     def get_form(self, form_class=None):
-        """
-        برای تغییر در برخی از فیلد های فرم استفاده میشود
-        مانند تغییر کلاس css در فیلد های فرم یا تغییر پبغام های خطای فرم
-
-
-        مثال:
-           مثال تغییر attribute های فیلد
-
-        .. code:: python
-
-           form.fields['username'].required = True
-           form.fields['username'].widget.attrs = {'class': 'form-control', 'placeholder': 'نام کاربری',
-                                                'autocomplete': 'off'}
-
-
-        مثال:
-           مثال تغییر پیغام های خطا های فرم
-
-        .. code:: python
-
-           form.error_messages = {
-               "invalid_login": "نام کاربری یا رمز عبور اشتباه !",
-               "inactive": "دسترسی شما به سامانه غیر فعال شده است !",
-               }
-
-        """
-
         form = super(UserLoginView, self).get_form(form_class)
         form.error_messages = {
             "invalid_login": "نام کاربری یا رمز عبور اشتباه !",
@@ -87,30 +54,13 @@ class UserLoginView(LoginView):
 
 
 class UserListView(DynamicListView):
-    """
-    برای ایجاد یک کاربر جدید در سامانه از این کلاس استفاده میشود
-
-    Arguments:
-        form_class(UserCreateForm):
-          فرمی که کلاس از آن استفاده میشود
-        template_name(str):
-           آردس تمپلت مورد استفاده در کلاس
-        success_url(str):
-           آدرس url که در صورت موفق بودن فرم، کاربر به آن هدایت خواهد شد
-    """
     model = User
     datatable_cols = ['#', 'نام کاربری', 'نام', 'نام خانوادگی', 'شماره تماس', 'نقش ها', 'مورد تایید']
 
 
-# class OtherUserList(LoginRequiredMixin, ListView):
-#     model = User
-#     template_name = 'user/other_user_list.html'
-#     extra_context = {'title': 'لیست کاربران'}
-#     ordering = 'id'
-
-
-# class UserDeleteView(DynamicApiDeleteView):
-#     model = User
+class StudentListView(DynamicListView):
+    model = User
+    datatable_cols = ['#', 'نام', 'نام خانوادگی', 'شماره دانشجویی', 'کد ملی']
 
 
 class UserViewSet(DynamicModelApi):
@@ -118,39 +68,61 @@ class UserViewSet(DynamicModelApi):
     A viewset that provides default `create()`, `retrieve()`, `update()`,
     `partial_update()`, `destroy()` and `list()` actions.
     """
-    columns = ['id', 'username', 'first_name', 'last_name', 'role', 'code_student', 'code_meli']
-    order_columns = ['id', 'username', 'first_name', 'last_name', 'role', 'code_student', 'code_meli']
+    columns = ['id', 'username', 'first_name', 'last_name', 'role']
+    order_columns = ['id', 'username', 'first_name', 'last_name', 'role']
     model = User
-    queryset = User.objects.all()
+    queryset = User.objects.exclude(role='student')
     serializer_class = UserCreateSerializer
     custom_perms = {
-        'datatable': ['admin', 'education', 'teacher'],
-        'create': ['admin', 'education', 'teacher'],
-        'update': ['admin', 'education', 'teacher'],
-        'destroy': ['admin', 'education', 'teacher'],
-        'retrieve': ['admin', 'education', 'teacher'],
-        'list': ['admin', 'education', 'teacher'],
+        'datatable': ROLES_JUST_ADMIN,
+        'create': ROLES_JUST_ADMIN,
+        'update': ROLES_JUST_ADMIN,
+        'destroy': ROLES_JUST_ADMIN,
+        'retrieve': ROLES_JUST_ADMIN,
+        'list': ROLES_JUST_ADMIN,
     }
 
-    def destroy(self, request, *args, **kwargs):
-        selected_user = self.get_object()
-        if not selected_user.is_student and not self.request.user.is_admin:
-            raise CustomValidation('', 'شما دسترسی حذف مدیر گروه را ندارید!')
-        else:
-            return super().destroy(request, *args, **kwargs)
+    def get_queryset(self):
+        return self.queryset
+
+
+class StudentViewSet(DynamicModelApi):
+    """
+    A viewset that provides default `create()`, `retrieve()`, `update()`,
+    `partial_update()`, `destroy()` and `list()` actions.
+    """
+    columns = ['id', 'first_name', 'last_name', 'code_student', 'code_meli']
+    order_columns = ['id', 'first_name', 'last_name', 'code_student', 'code_meli']
+    model = User
+    queryset = User.objects.filter(role='student')
+    serializer_class = UserCreateSerializer
+    custom_perms = {
+        'datatable': ROLES_EXCEPT_STUDENT,
+        'create': ROLES_EXCEPT_STUDENT,
+        'update': ROLES_EXCEPT_STUDENT,
+        'destroy': ROLES_EXCEPT_STUDENT,
+        'retrieve': ROLES_EXCEPT_STUDENT,
+        'list': ROLES_EXCEPT_STUDENT,
+    }
+
+    def get_queryset(self):
+        return self.queryset
 
 
 class UserCreateView(DynamicCreateView):
     model = User
     success_url = '/user/list'
-    form = user_form(['username', 'password', 'first_name', 'last_name', 'groups'])
+    form = user_form(['username', 'password', 'first_name', 'last_name', 'role'])
     datatableEnable = False
+    permission_required = ROLES_JUST_ADMIN
 
-    def get_extra_context(self, context):
-        gp, is_created = Group.objects.get_or_create(name="کارشناس")
-        gp.permissions.set([x.id for x in Permission.objects.all()])
-        gp.save()
-        return super().get_extra_context(context)
+
+class StudentCreateView(DynamicCreateView):
+    model = User
+    success_url = '/user/list'
+    form = user_form(['first_name', 'last_name', 'code_student', 'code_meli'])
+    datatableEnable = False
+    permission_required = ROLES_EXCEPT_STUDENT
 
 
 class UserUpdateView(DynamicUpdateView):

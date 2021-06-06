@@ -47,8 +47,11 @@ class User(AbstractUser):
     def is_admin(self):
         return self.role == 'admin'
 
+    def has_role(self, roles):
+        return self.role in roles
+
     def __str__(self):
-        return self.first_name + ' ' + self.last_name + ' ' + self.code_student
+        return self.first_name + ' ' + self.last_name
 
     @staticmethod
     def find_by_std_code(std_code):

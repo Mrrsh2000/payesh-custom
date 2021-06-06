@@ -9,15 +9,13 @@ import re
 
 from django import forms
 from django.contrib import messages
-from django.contrib.auth.models import Permission
 from django.core.paginator import Paginator
 from django.db import models
 from django.db.models import F
 from django.db.models import Q, Model
 from django.forms import ModelForm
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import redirect
 from django.urls import path
 from django.views import View
 from django.views.generic import CreateView, UpdateView
@@ -350,26 +348,6 @@ class DynamicListView(LoginRequiredMixin, CustomPermissionRequiredMixin, Templat
                                                                 self.model._meta.fields] + [x.name for x in
                                                                                             self.model._meta.many_to_many]
 
-    def handle_no_permission(self):
-        # Must check
-        messages.error(self.request, 'شما دسترسی ' + Permission.objects.filter(
-            codename=self.get_permission_required().split('.')[1]).last().name + ' را ندارید')
-        return redirect('/')
-
-    def get_permission_required(self):
-        # this perm tested and Work Correct another Views must be Fix
-        if self.permission_required:
-            return self.permission_required
-        permissions = ['' + x[0] for x in self.model._meta.permissions]
-        if len(permissions) == 1:
-            self.permission_required = str(self.model._meta).split('.')[0] + '.' + permissions[0]
-            return (str(self.model._meta).split('.')[0] + '.' + permissions[0],)
-        if [lambda x: 'view' in x for x in permissions]:
-            permissions_ = str(self.model._meta).split('.')[0] + '.' + [x for x in permissions if 'view' in x][0]
-            self.permission_required = permissions_
-            return (permissions_,)
-        raise Exception('دسترسی برای مدل تعریف نشده است!')
-
     def get_success_url(self):
         split = str(self.model._meta).replace('.', '/')
         return '/' + split + '/list'
@@ -455,32 +433,6 @@ class DynamicCreateView(LoginRequiredMixin, CustomPermissionRequiredMixin, Creat
         if custom_model:
             self.model = custom_model
 
-    def handle_no_permission(self):
-        # Must check
-        messages.error(self.request, 'شما دسترسی ' + Permission.objects.filter(
-            codename=self.get_permission_required().split('.')[1]).last().name + ' را ندارید')
-        return redirect('/')
-
-    def has_permission(self):
-        if self.permission_required is False:
-            return True
-        perms = self.get_permission_required()
-        return self.request.user.has_perms(perms)
-
-    def get_permission_required(self):
-        # this perm tested and Work Correct another Views must be Fix
-        if self.permission_required:
-            return self.permission_required
-        permissions = ['' + x[0] for x in self.model._meta.permissions]
-        if len(permissions) == 1:
-            self.permission_required = str(self.model._meta).split('.')[0] + '.' + permissions[0]
-            return (str(self.model._meta).split('.')[0] + '.' + permissions[0],)
-        if [lambda x: 'add' in x for x in permissions]:
-            permissions_ = str(self.model._meta).split('.')[0] + '.' + [x for x in permissions if 'add' in x][0]
-            self.permission_required = permissions_
-            return (permissions_,)
-        raise Exception('دسترسی برای مدل تعریف نشده است!')
-
     def get_template_names(self):
         if self.template_name:
             return self.template_name
@@ -491,7 +443,6 @@ class DynamicCreateView(LoginRequiredMixin, CustomPermissionRequiredMixin, Creat
         return self.datatable_cols if self.datatable_cols else [field.verbose_name for field in
                                                                 self.model._meta.fields] + [x.name for x in
                                                                                             self.model._meta.many_to_many]
-
 
     def get_success_url(self):
         if self.success_url:
@@ -627,21 +578,6 @@ class DynamicDatatableView(LoginRequiredMixin, CustomPermissionRequiredMixin, Ba
             qs = qs.filter(Q(title__icontains=search))
         return qs
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'شما دسترسی ' + Permission.objects.filter(
-            codename=self.get_permission_required().split('.')[1]).last().name + ' را ندارید')
-        return redirect('/')
-
-    def get_permission_required(self):
-        if self.permission_required:
-            return self.permission_required
-        permissions = ['' + x[0] for x in self.model._meta.permissions]
-        if len(permissions) == 1:
-            return str(self.model._meta).split('.')[0] + '.' + permissions[0]
-        if [lambda x: 'view' in x for x in permissions]:
-            return str(self.model._meta).split('.')[0] + '.' + str([lambda x: 'view' in x for x in permissions][0])
-        raise Exception('دسترسی برای مدل تعریف نشده است!')
-
     def render_column(self, row, column):
 
         colType = type(getattr(row, column)).__name__
@@ -694,6 +630,7 @@ class DynamicUpdateView(LoginRequiredMixin, CustomPermissionRequiredMixin, Updat
 
     def get_extra_widget(self):
         return self.extra_widget
+
     def get_form_fields_config(self):
         return self.form_fields_config
 
@@ -704,21 +641,6 @@ class DynamicUpdateView(LoginRequiredMixin, CustomPermissionRequiredMixin, Updat
             return self.form_class
         return dynamic_form(self.model, self.form_fields if self.form_fields else [], self.get_form_fields_config(),
                             extra_widget=self.get_extra_widget())
-
-    def get_permission_required(self):
-        if self.permission_required:
-            return self.permission_required
-        permissions = ['' + x[0] for x in self.model._meta.permissions]
-        if len(permissions) == 1:
-            return str(self.model._meta).split('.')[0] + '.' + permissions[0]
-        if [lambda x: 'edit' in x for x in permissions]:
-            return str(self.model._meta).split('.')[0] + '.' + str([lambda x: 'edit' in x for x in permissions][0])
-        raise Exception('دسترسی برای مدل تعریف نشده است!')
-
-    def handle_no_permission(self):
-        messages.error(self.request, 'شما دسترسی ' + Permission.objects.filter(
-            codename=self.get_permission_required().split('.')[1]).last().name + ' را ندارید')
-        return redirect('/')
 
     def get_template_names(self):
         if self.template_name:
@@ -796,21 +718,6 @@ class DynamicDeleteView(LoginRequiredMixin, CustomPermissionRequiredMixin, View)
     """
     model = None
     permission_required = None
-
-    def handle_no_permission(self):
-        messages.error(self.request, 'شما دسترسی ' + Permission.objects.filter(
-            codename=self.get_permission_required().split('.')[1]).last().name + ' را ندارید')
-        return redirect('/')
-
-    def get_permission_required(self):
-        if self.permission_required:
-            return self.permission_required
-        permissions = ['' + x[0] for x in self.model._meta.permissions]
-        if len(permissions) == 1:
-            return str(self.model._meta).split('.')[0] + '.' + permissions[0]
-        if [lambda x: 'delete' in x for x in permissions]:
-            return str(self.model._meta).split('.')[0] + '.' + str([lambda x: 'delete' in x for x in permissions][0])
-        raise Exception('دسترسی برای مدل تعریف نشده است!')
 
     def get(self, request, pk):
         """
