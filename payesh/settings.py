@@ -143,17 +143,24 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
+# STATIC_URL = '/static/'
+#
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'static/'),
+# )
+#
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+#
+# MEDIA_URL = '/media/'
+
+# Server Mode:
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static/'),
-)
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
 MEDIA_URL = '/media/'
+STATICFILES_DIRS = [BASE_DIR + "/static", ]
+STATIC_ROOT = '/home/mahangol/public_html/payesh/static'
+MEDIA_ROOT = '/home/mahangol/public_html/payesh/media'
 
 JWT_AUTH = {
     'JWT_ENCODE_HANDLER':
