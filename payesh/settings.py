@@ -158,7 +158,7 @@ USE_TZ = False
 # Server Mode:
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-STATICFILES_DIRS = [BASE_DIR + "/payesh/static", ]
+STATICFILES_DIRS = [BASE_DIR + "/static", ]
 STATIC_ROOT = '/home/mahangol/public_html/payesh/static'
 MEDIA_ROOT = '/home/mahangol/public_html/payesh/media'
 
