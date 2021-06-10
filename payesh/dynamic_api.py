@@ -116,7 +116,7 @@ class DynamicModelApi(viewsets.ModelViewSet, BaseDatatableView):
             self.permission_denied(
                 request, message=getattr('Login Required', 'message', None)
             )
-        if self.custom_perms:
+        if self.custom_perms and not self.request.user.is_superuser:
             if self.custom_perms.get(self.action):
                 if self.request.user.role not in self.custom_perms.get(self.action):
                     self.permission_denied(request, message='شما دسترسی ندارید!')
@@ -143,11 +143,13 @@ class DynamicModelApi(viewsets.ModelViewSet, BaseDatatableView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         except Exception as e:
-            if e.args[1]:
+            if len(e.args) > 1:
                 errorList = []
                 for x in e.args[1]:
                     errorList.append(x._meta.verbose_name + '(' + str(x) + ')')
                 return Response(' - '.join(errorList), status=500)
+
+            return Response('مشکلی پیش آمده است', status=500)
 
     def update(self, request, *args, **kwargs):
         if 'update' in self.disables_views:

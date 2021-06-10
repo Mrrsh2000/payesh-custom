@@ -25,40 +25,28 @@
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>نام کاربری</label>
-                                            {{ form.username }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>رمز عبور</label>
-                                            {% render_field form.password type='password' %}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label> تکرار رمز عبور</label>
-                                            {{ form.repeat_password }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
+                                    <div class="col-xl-3 col-md-6">
                                         <div class="form-group">
                                             <label>نام</label>
                                             {{ form.first_name }}
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-xl-3 col-md-6">
                                         <div class="form-group">
                                             <label>نام خانوادگی</label>
                                             {{ form.last_name }}
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-xl-3 col-md-6">
                                         <div class="form-group">
-                                            <label>نقش</label>
-                                            {{ form.role }}
+                                            <label>شماره دانشجویی</label>
+                                            {{ form.code_student }}
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6">
+                                        <div class="form-group">
+                                            <label>کد ملی</label>
+                                            {{ form.code_meli }}
                                         </div>
                                     </div>
                                 </div>
@@ -110,27 +98,15 @@
                             },
                         }
                     },
-                    password: {
-                        validators: {
-                            stringLength: {
-                                min: 6,
-                                max: 20,
-                                message: 'رمز عبور باید بین 6 تا 20 کاراکتر باشد!'
-                            },
-                            notEmpty: {
-                                message: 'وارد کردن رمز عبور الزامی است!'
-                            },
-                        }
-                    },
-                    repeat_password: {
+                    code_meli: {
                         validators: {
                             notEmpty: {
-                                message: 'وارد کردن تکرار رمز عبور الزامی است!'
+                                message: 'وارد کردن کد ملی الزامی است!'
                             },
                             callback: {
-                                message: 'رمز عبور با تکرار رمز عبور مطابقت ندارد!',
+                                message: 'کد ملی وارد شده صحیح نمی باشد!',
                                 callback: function (input) {
-                                    return input.value === document.querySelector('#id_password').value
+                                    return code_meli_valid(input.value)
                                 }
 
                             }
@@ -149,8 +125,8 @@
             formV.validate().then(function (status) {
                 if (status === 'Valid') {
                     ApiAjax({
-                        success_url: USER_LIST_TEMPLATE,
-                        url: USER_API_CREATE_URL,
+                        success_url: STUDENT_LIST_TEMPLATE,
+                        url: STUDENT_API_CREATE_URL,
                         form: 'form',
                         method: 'POST',
                         button: button,

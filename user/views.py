@@ -3,18 +3,13 @@ from django.contrib.auth.views import LoginView
 from payesh.dynamic import DynamicCreateView, DynamicListView, DynamicUpdateView
 from payesh.dynamic_api import DynamicModelApi
 from payesh.logging import log
-from payesh.settings import ROLES_EXCEPT_STUDENT, ROLES_JUST_ADMIN
+from payesh.settings import ROLES_JUST_ADMIN
 from user.forms import user_form
 from user.models import User
 from user.serializers import UserCreateSerializer
 
 
 class UserLoginView(LoginView):
-    """
-    برای لاگین شدن کاربر استفاده میشود و
-    از LoginView خود جانگو و فرم آن استفاده میکند
-
-    """
     template_name = 'login.html'
 
     def get_form(self, form_class=None):
@@ -41,26 +36,16 @@ class UserLoginView(LoginView):
         return form
 
     def form_valid(self, form):
-        """
-        برای لاگ کردن ورود کاربر استفاده میشود
-
-        Arguments:
-            form:
-                فرم ارسال شده است
-        """
         res = super().form_valid(form)
         log(self.request.user, 1, 1, True)
         return res
 
 
 class UserListView(DynamicListView):
+    permission_required = ROLES_JUST_ADMIN
     model = User
-    datatable_cols = ['#', 'نام کاربری', 'نام', 'نام خانوادگی', 'شماره تماس', 'نقش ها', 'مورد تایید']
-
-
-class StudentListView(DynamicListView):
-    model = User
-    datatable_cols = ['#', 'نام', 'نام خانوادگی', 'شماره دانشجویی', 'کد ملی']
+    datatable_cols = ['#', 'نام کاربری', 'نام', 'نام خانوادگی', 'نقش']
+    model_name = 'اساتید'
 
 
 class UserViewSet(DynamicModelApi):
@@ -82,28 +67,8 @@ class UserViewSet(DynamicModelApi):
         'list': ROLES_JUST_ADMIN,
     }
 
-    def get_queryset(self):
-        return self.queryset
-
-
-class StudentViewSet(DynamicModelApi):
-    """
-    A viewset that provides default `create()`, `retrieve()`, `update()`,
-    `partial_update()`, `destroy()` and `list()` actions.
-    """
-    columns = ['id', 'first_name', 'last_name', 'code_student', 'code_meli']
-    order_columns = ['id', 'first_name', 'last_name', 'code_student', 'code_meli']
-    model = User
-    queryset = User.objects.filter(role='student')
-    serializer_class = UserCreateSerializer
-    custom_perms = {
-        'datatable': ROLES_EXCEPT_STUDENT,
-        'create': ROLES_EXCEPT_STUDENT,
-        'update': ROLES_EXCEPT_STUDENT,
-        'destroy': ROLES_EXCEPT_STUDENT,
-        'retrieve': ROLES_EXCEPT_STUDENT,
-        'list': ROLES_EXCEPT_STUDENT,
-    }
+    def filter_queryset(self, qs):
+        return super().filter_queryset(qs).exclude(role='student')
 
     def get_queryset(self):
         return self.queryset
@@ -115,14 +80,7 @@ class UserCreateView(DynamicCreateView):
     form = user_form(['username', 'password', 'first_name', 'last_name', 'role'])
     datatableEnable = False
     permission_required = ROLES_JUST_ADMIN
-
-
-class StudentCreateView(DynamicCreateView):
-    model = User
-    success_url = '/user/list'
-    form = user_form(['first_name', 'last_name', 'code_student', 'code_meli'])
-    datatableEnable = False
-    permission_required = ROLES_EXCEPT_STUDENT
+    model_name = 'اساتید'
 
 
 class UserUpdateView(DynamicUpdateView):
@@ -130,9 +88,11 @@ class UserUpdateView(DynamicUpdateView):
     این کلاس برای ویرایش کاربران کاشف استفاده می شود
     """
     model = User
-    form = user_form(['username', 'first_name', 'last_name', 'groups'], update=True)
+    form = user_form(['username', 'first_name', 'last_name', 'role'], update=True)
     success_url = '/user/list'
     template_name = 'user/user_update.html'
+    permission_required = ROLES_JUST_ADMIN
+    model_name = 'اساتید'
 
 
 class SelfUpdateView(DynamicUpdateView):
@@ -146,6 +106,7 @@ class SelfUpdateView(DynamicUpdateView):
     extra_context = {
         'self': True
     }
+    model_name = 'اساتید'
 
     def get_object(self, queryset=None):
         return self.request.user

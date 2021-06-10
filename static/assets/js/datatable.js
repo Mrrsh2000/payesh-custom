@@ -318,7 +318,7 @@ const naviItem = (text = '', icon = '', extraClass = '', href = '#') => {
 
 const boldCol = (query, row, data) => {
     let arg = 'td:eq(' + query + ')';
-    if (isNaN(data[0])) data = data[0].toUpperCase() + data.slice(1);
+    if (isNaN(data[0]) && data[0]) data = data[0].toUpperCase() + data.slice(1);
     return $(arg, row).html(`<div class="font-weight-bolder text-primary mb-0"> ${data}</div>`);
 };
 const bolderCol = (query, row, data) => {

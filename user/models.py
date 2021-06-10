@@ -25,7 +25,7 @@ class User(AbstractUser):
         ('education', 'آموزش'),
         ('admin', 'مدیر گروه'),
     )
-    role = models.IntegerField(default='student', verbose_name='نوع حساب')
+    role = models.CharField(max_length=15, choices=ROLES, default='student', verbose_name='نوع حساب')
     code_student = models.CharField(max_length=15, null=True, verbose_name='کد دانشجویی')
     code_meli = models.CharField(max_length=11, null=True, verbose_name='کد ملی')
 
@@ -48,7 +48,8 @@ class User(AbstractUser):
         return self.role == 'admin'
 
     def has_role(self, roles):
-        return self.role in roles
+
+        return self.is_superuser or self.role in roles
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
