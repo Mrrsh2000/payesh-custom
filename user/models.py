@@ -49,11 +49,21 @@ class User(AbstractUser):
         return self.is_superuser or self.role in roles
 
     def __str__(self):
+        if self.role == 'student':
+            return self.first_name + ' ' + self.last_name + f' ( {self.code_student} ) '
         return self.first_name + ' ' + self.last_name
 
     @staticmethod
     def find_by_std_code(std_code):
         return User.objects.filter(code_student=std_code).first()
+
+    @staticmethod
+    def students():
+        return User.objects.filter(role='student')
+
+    @staticmethod
+    def teachers():
+        return User.objects.exclude(role='student')
 
 
 class Ticket(models.Model):

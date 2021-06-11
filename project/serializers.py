@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from payesh.dynamic import api_error_creator
 from payesh.dynamic_api import DynamicSerializer
-from user.models import User
+from project.models import Project
 
 
 class ProjectSerializer(DynamicSerializer):
@@ -16,13 +16,16 @@ class ProjectSerializer(DynamicSerializer):
     }
 
     class Meta:
-        model = User
-        extra_kwargs = api_error_creator(User,
-                                         ['username', 'password', 'first_name', 'last_name', 'role'],
-                                         blank_fields=['username', 'password'],
-                                         required_fields=['first_name', 'last_name'])
+        model = Project
+        extra_kwargs = api_error_creator(Project,
+                                         ['title', 'description', 'code', 'start_date', 'end_date', 'score',
+                                          'progress', 'teacher', 'user',
+                                          'is_ready', 'is_finish', ],
+                                         blank_fields=[],
+                                         required_fields=[])
         depth = 5
-        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'role']
+        fields = ['id', 'title', 'description', 'code', 'start_date', 'end_date', 'score', 'progress', 'teacher', 'user',
+               'is_ready', 'is_finish', ]
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)

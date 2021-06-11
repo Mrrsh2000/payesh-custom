@@ -52,15 +52,14 @@
     <script>
 
         var table = datatable_simple_show({
-            {#extras: [naviItem('نمایش پیوست الزام', 'far fa-file-archive', 'pyvast_elzam'), naviItem('اطلاعات محصول', 'fas fa-info', 'info_mahsol_elzam'), naviItem('اطلاعات الزام', 'fas fa-info-circle', 'info_elzam')],#}
-            url: USER_API_DATATABLE_URL,
+            url: PROJECT_API_DATATABLE_URL,
             real_cols: {{cols|length}},
             hide_id: true,
             loading_all: true,
             responsive: true,
             datable_id: '#table',
-            del_url: USER_API_DELETE_URL,
-            up_url: USER_UPDATE_TEMPLATE,
+            del_url: PROJECT_API_DELETE_URL,
+            up_url: PROJECT_UPDATE_TEMPLATE,
             extra_del_params: {
                 ajax: true,
             },

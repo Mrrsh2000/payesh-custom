@@ -3,6 +3,7 @@ from payesh.dynamic_api import DynamicModelApi
 from payesh.settings import ROLES_EXCEPT_STUDENT
 from project.models import Project
 from project.serializers import ProjectSerializer
+from user.models import User
 
 
 class ProjectViewSet(DynamicModelApi):
@@ -10,8 +11,11 @@ class ProjectViewSet(DynamicModelApi):
     A viewset that provides default `create()`, `retrieve()`, `update()`,
     `partial_update()`, `destroy()` and `list()` actions.
     """
-    columns = ['id', 'projectname', 'first_name', 'last_name', 'role']
-    order_columns = ['id', 'projectname', 'first_name', 'last_name', 'role']
+    columns = ['id', 'title', 'code', 'start_date', 'end_date', 'score', 'progress', 'teacher', 'user',
+               'is_ready', 'is_finish', 'created_at', ]
+    order_columns = ['id', 'title', 'code', 'start_date', 'end_date', 'score', 'progress', 'teacher',
+                     'user',
+                     'is_ready', 'is_finish', 'created_at', ]
     model = Project
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -34,8 +38,19 @@ class ProjectViewSet(DynamicModelApi):
 class ProjectListView(DynamicListView):
     permission_required = ROLES_EXCEPT_STUDENT
     model = Project
-    datatable_cols = ['#', 'نام کاربری', 'نام', 'نام خانوادگی', 'نقش']
-    model_name = 'اساتید'
+    datatable_cols = ['#',
+                      'عنوان',
+                      'کد پروژه',
+                      'تاریخ شروع',
+                      'تاریخ پایان',
+                      'نمره',
+                      'درصد پیشرفت',
+                      'استاد راهنما',
+                      'دانشجو',
+                      'آماده ثبت نمره',
+                      'خاتمه یافته',
+                      'تاریخ ایجاد',
+                      ]
 
 
 class ProjectCreateView(DynamicCreateView):
@@ -43,7 +58,20 @@ class ProjectCreateView(DynamicCreateView):
     success_url = '/project/list'
     datatableEnable = False
     permission_required = ROLES_EXCEPT_STUDENT
-    model_name = 'اساتید'
+    form_fields = [
+        'title',
+        'code',
+        'start_date',
+        'end_date',
+        'teacher',
+        'user',
+        'description',
+    ]
+
+    def get_extra_context(self, context):
+        context['form'].fields['teacher'].queryset = User.teachers()
+        context['form'].fields['user'].queryset = User.students().filter(projects__isnull=True)
+        return super().get_extra_context(context)
 
 
 class ProjectUpdateView(DynamicUpdateView):
@@ -54,4 +82,12 @@ class ProjectUpdateView(DynamicUpdateView):
     success_url = '/project/list'
     template_name = 'project/project_update.html'
     permission_required = ROLES_EXCEPT_STUDENT
-    model_name = 'اساتید'
+    form_fields = [
+        'title',
+        'code',
+        'start_date',
+        'end_date',
+        'teacher',
+        'user',
+        'description',
+    ]

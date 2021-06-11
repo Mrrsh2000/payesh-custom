@@ -13,6 +13,7 @@ class Project(models.Model):
         )
 
     title = models.CharField(max_length=255, verbose_name='عنوان')
+    description = models.TextField(verbose_name='توضیحات', blank=True, null=True)
     code = models.CharField(max_length=255, verbose_name='کد پروژه')
     start_date = PersianDateField(blank=True, null=True, verbose_name='تاریخ شروع')
     end_date = PersianDateField(blank=True, null=True, verbose_name='تاریخ پایان')
@@ -20,10 +21,10 @@ class Project(models.Model):
     progress = models.IntegerField(default=0, blank=True, verbose_name='درصد پیشرفت')
     teacher = models.ForeignKey(User, related_name='std_projects', on_delete=models.CASCADE,
                                 verbose_name='استاد راهنما')
-    user = models.ForeignKey(User, related_name='projects', on_delete=models.CASCADE,
+    user = models.ForeignKey(User, unique=True, related_name='projects', on_delete=models.CASCADE,
                              verbose_name='دانشجو')
     is_ready = models.BooleanField(default=False, blank=True, verbose_name='آماده ثبت نمره')
-    is_finish = models.BooleanField(default=False, blank=True, verbose_name='ثبت نمره')
+    is_finish = models.BooleanField(default=False, blank=True, verbose_name='خاتمه یافته')
     created_at = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, blank=True, verbose_name='تاریخ آخرین ویرایش')
 

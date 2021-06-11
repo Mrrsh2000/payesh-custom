@@ -35,6 +35,21 @@ const
     STUDENT_LIST_TEMPLATE = '/user/student/list';
 
 
+////////////////// PROJECT //////////////////
+
+//   // API URLS:
+const PROJECT_API_DELETE_URL = API_VERSION + 'project/0',
+    PROJECT_API_UPDATE_URL = API_VERSION + 'project/0',
+    PROJECT_API_DATATABLE_URL = API_VERSION + 'project/datatable/',
+    PROJECT_API_CREATE_URL = API_VERSION + 'project/';
+
+
+//  // TEMPLATE URLS:
+const
+    PROJECT_UPDATE_TEMPLATE = '/project/update/0',
+    PROJECT_LIST_TEMPLATE = '/project/list';
+
+
 ////////////////// LOG //////////////////
 
 //   // API URLS:
