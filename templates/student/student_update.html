@@ -19,12 +19,6 @@
                                 <div class="row">
                                     <div class="col-lg-3 col-md-6">
                                         <div class="form-group">
-                                            <label class="font-weight-bolder">نام کاربری</label>
-                                            {{ form.username }}
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
                                             <label class="font-weight-bolder">نام</label>
                                             {{ form.first_name }}
                                         </div>
@@ -37,8 +31,14 @@
                                     </div>
                                     <div class="col-lg-3 col-md-6">
                                         <div class="form-group">
-                                            <label class="font-weight-bolder">دسترسی</label>
-                                            {{ form.role }}
+                                            <label class="font-weight-bolder">{{ form.code_student.label }}</label>
+                                            {{ form.code_student }}
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="form-group">
+                                            <label class="font-weight-bolder">{{ form.code_meli.label }}</label>
+                                            {{ form.code_meli }}
                                         </div>
                                     </div>
                                 </div>
@@ -114,8 +114,8 @@
                         })
                     {% else %}
                         ApiAjax({
-                            success_url: USER_LIST_TEMPLATE,
-                            url: USER_API_UPDATE_URL,
+                            success_url: STUDENT_LIST_TEMPLATE,
+                            url: STUDENT_API_UPDATE_URL,
                             form: 'form',
                             method: 'PUT',
                             pk: '{{object.id}}',

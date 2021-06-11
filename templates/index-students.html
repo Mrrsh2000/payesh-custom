@@ -1,0 +1,18 @@
+<div class="row">
+    {% if not request.user.project %}
+        <div class="col-12">
+            <div class="card card-custom bg-danger gutter-b">
+                <div class="card-body">
+                    <h1 class="text-center text-white">
+                        هنوز پروژه ای برای شما ایجاد نشده است!
+                        <br>
+                        <br>
+                        لطفا از استاد راهنما خود پیگیری کنید.
+                    </h1>
+                </div>
+            </div>
+        </div>
+    {% else %}
+
+    {% endif %}
+</div>
