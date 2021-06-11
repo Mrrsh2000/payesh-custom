@@ -57,10 +57,12 @@ urlpatterns = [
                   path('logout/', UserLogout.as_view(), name='user_logout'),
                   # API URLS
                   path('api/v1/', include('user.routers')),
+                  path('api/v1/', include('project.routers')),
                   path('api/v1/select2/', include('payesh.select2_urls')),
                   # Modules URLS
                   path('', index, name='index'),
                   path('user/', include('user.urls')),
+                  path('project/', include('project.urls')),
                   path('logs/', include('logs.urls')),
                   path('api/v1/', include('logs.routers')),
                   # API URLS

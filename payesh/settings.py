@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'user.apps.userConfig',
     'logs.apps.LogsConfig',
+    'project.apps.ProjectConfig',
 ]
 
 REST_FRAMEWORK = {
