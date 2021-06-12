@@ -18,7 +18,7 @@ class Project(models.Model):
     start_date = PersianDateField(blank=True, null=True, verbose_name='تاریخ شروع')
     end_date = PersianDateField(blank=True, null=True, verbose_name='تاریخ پایان')
     score = models.FloatField(blank=True, null=True, verbose_name='نمره')
-    progress = models.IntegerField(default=0, blank=True, verbose_name='درصد پیشرفت')
+    # progress = models.IntegerField(default=0, blank=True, verbose_name='درصد پیشرفت')
     teacher = models.ForeignKey(User, related_name='std_projects', on_delete=models.CASCADE,
                                 verbose_name='استاد راهنما')
     user = models.ForeignKey(User, unique=True, related_name='projects', on_delete=models.CASCADE,

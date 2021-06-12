@@ -19,13 +19,13 @@ class ProjectSerializer(DynamicSerializer):
         model = Project
         extra_kwargs = api_error_creator(Project,
                                          ['title', 'description', 'code', 'start_date', 'end_date', 'score',
-                                          'progress', 'teacher', 'user',
+                                          'teacher', 'user',
                                           'is_ready', 'is_finish', ],
                                          blank_fields=[],
                                          required_fields=[])
         depth = 5
-        fields = ['id', 'title', 'description', 'code', 'start_date', 'end_date', 'score', 'progress', 'teacher', 'user',
-               'is_ready', 'is_finish', ]
+        fields = ['id', 'title', 'description', 'code', 'start_date', 'end_date', 'score', 'teacher', 'user',
+                  'is_ready', 'is_finish', ]
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)

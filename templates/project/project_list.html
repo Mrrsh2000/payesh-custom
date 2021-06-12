@@ -79,11 +79,84 @@
                     else if (data[value].startsWith('/media/'))
                         $(`td:eq(${value - 1})`, row).html(`<a download href="${data[value]}" class="btn btn-primary btn-circle btn-icon" title="جهت دریافت فایل کلیک کنید"><i class="fa fa-download"></i></a>`)
                 }
-                boldCol(0, row, data[1])
+                boldCol(0, row, data[1]);
+                {% if is_teacher %}
+                    $(`td:eq(10)`, row).prepend(`<button onclick="change_number(${data[0]})" type="button" data-skin="dark" data-toggle="tooltip" data-placement="top" title="" data-original-title="ثبت نمره" class="btn btn-sm btn-light-primary btn-icon ml-2"><i class="fa fa-check"></i></button>`);
+                    if (data[5]) {
+                        if (data[8] === 'bool-false')
+                            $(`td:eq(7)`, row).html(`<button onclick="send_to_edu(${data[0]})" class="btn btn-primary btn-sm btn-pill">ارسال نمره به آموزش</button>`);
+                        else {
+                            $(`td:eq(7)`, row).html(`<button onclick="send_to_edu(${data[0]})" class="btn btn-danger btn-sm btn-pill">عدم ارسال نمره به آموزش</button>`);
 
-
+                        }
+                    }
+                {% endif %}
             },
 
         });
+        const change_number = (pk) => {
+            Swal.fire({
+                title: 'نمره مورد نظر را وارد کنید:',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                inputValidator: (value) => {
+                    if (!value || isNaN(value)) {
+                        return 'باید عددی باشد!'
+                    }
+                },
+                showCancelButton: true,
+                confirmButtonText: 'ثبت نمره',
+                cancelButtonText: 'لغو',
+                showLoaderOnConfirm: true,
+            }).then((result) => {
+                if (result.value) {
+                    console.log(result.value)
+                    ApiAjax({
+                        url: PROJECT_API_NUMBER_URL,
+                        data: {
+                            'number': result.value
+                        },
+                        pk: pk,
+                        method: 'POST',
+                        table: table,
+                        success: function () {
+                            bodyLoadingDisable('.form-loading');
+                        },
+                        success_message: 'نمره با موفقیت ثبت شد!',
+                    })
+                } else {
+                    bodyLoadingDisable('.form-loading');
+                }
+            })
+
+        };
+
+        const send_to_edu = (pk) => {
+            Swal.fire({
+                title: 'آیا مطمئن هستید ؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'لغو'
+            }).then((result) => {
+                if (result.value) {
+                    ApiAjax({
+                        url: PROJECT_API_EDUCATION_TOGGLE_URL,
+                        pk: pk,
+                        method: 'POST',
+                        table: table,
+                        success: function () {
+                            bodyLoadingDisable('.form-loading');
+                        },
+                        success_message: 'نمره با موفقیت ثبت شد!',
+                    })
+                } else {
+                    bodyLoadingDisable('.form-loading');
+                }
+            })
+
+        }
     </script>
 {% endblock %}
