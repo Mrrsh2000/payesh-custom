@@ -17,35 +17,29 @@
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">نام</label>
-                                            {{ form.first_name }}
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">نام خانوادگی</label>
-                                            {{ form.last_name }}
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">{{ form.code_student.label }}</label>
-                                            {{ form.code_student }}
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">{{ form.code_meli.label }}</label>
-                                            {{ form.code_meli }}
-                                        </div>
-                                    </div>
+                                    {% for field in form %}
+                                        {% if field.label == 'توضیحات' %}
+                                            <div class="col-xl-6 col-md-12">
+                                                <div class="form-group">
+                                                    <label>{{ field.label }}</label>
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+
+                                        {% else %}
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="form-group">
+                                                    <label>{{ field.label }}</label>
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="card-footer">
                                 <a href="{{ back }}" class="btn ml-2 btn-secondary">بازگشت</a>
-                                <button type="button" id="submitter" class="btn btn-primary">ویرایش کاربر</button>
+                                <button type="button" id="submitter" class="btn btn-primary">ویرایش پروژه</button>
                             </div>
                         </form>
                     </div>
@@ -103,26 +97,15 @@
             const button = this;
             formV.validate().then(function (status) {
                 if (status === 'Valid') {
-                    {% if self %}
-                        ApiAjax({
-                            success_url: '/',
-                            url: SELF_API_UPDATE_URL,
-                            form: 'form',
-                            method: 'PUT',
-                            button: button,
-                            success_message: 'اطلاعات شما با موفقیت ویرایش شد!'
-                        })
-                    {% else %}
-                        ApiAjax({
-                            success_url: STUDENT_LIST_TEMPLATE,
-                            url: STUDENT_API_UPDATE_URL,
-                            form: 'form',
-                            method: 'PUT',
-                            pk: '{{object.id}}',
-                            button: button,
-                            success_message: 'کاربر ({{ form.first_name.value }} {{ form.last_name.value }}) با موفقیت ویرایش شد!',
-                        })
-                    {% endif %}
+                    ApiAjax({
+                        success_url: PROJECT_LIST_TEMPLATE,
+                        url: PROJECT_API_UPDATE_URL,
+                        form: 'form',
+                        method: 'PUT',
+                        pk: '{{object.id}}',
+                        button: button,
+                        success_message: 'پروژه ({{ form.title.value }}) با موفقیت ویرایش شد!',
+                    })
                 } else {
                     Swal.fire({
                         text: "به نظر می رسد تعدادی خطا در اطلاعات شما وجود دارد، لطفا دوباره تلاش کنید.",

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 {% block body %}
     <div class="d-flex flex-column-fluid">
         <!--begin::Container-->
@@ -9,58 +10,60 @@
                     <div class="card card-custom">
                         <div class="card-header">
                             <h3 class="card-title">
-                                ویرایش
-                                {{ object }}
+                                افزودن
+                                {{ model_name }}
                             </h3>
+                            <div class="card-toolbar">
+                                <div class="example-tools justify-content-center">
+                                    <span class="example-toggle" data-toggle="tooltip" title="View code"></span>
+                                    <span class="example-copy" data-toggle="tooltip" title="Copy code"></span>
+                                </div>
+                            </div>
                         </div>
-                        <form id="form" method="post">
+                        <!--begin::Form-->
+                        <form class="form" id="form" method="POST">
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">نام</label>
-                                            {{ form.first_name }}
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">نام خانوادگی</label>
-                                            {{ form.last_name }}
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">{{ form.code_student.label }}</label>
-                                            {{ form.code_student }}
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-group">
-                                            <label class="font-weight-bolder">{{ form.code_meli.label }}</label>
-                                            {{ form.code_meli }}
-                                        </div>
-                                    </div>
+                                    {% for field in form %}
+                                        {% if field.label == 'توضیحات' %}
+                                            <div class="col-xl-6 col-md-12">
+                                                <div class="form-group">
+                                                    <label>{{ field.label }}</label>
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+
+                                        {% else %}
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="form-group">
+                                                    <label>{{ field.label }}</label>
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
+
                             <div class="card-footer">
                                 <a href="{{ back }}" class="btn ml-2 btn-secondary">بازگشت</a>
-                                <button type="button" id="submitter" class="btn btn-primary">ویرایش کاربر</button>
+                                <button type="button" class="btn btn-primary">ثبت پروژه جدید</button>
                             </div>
                         </form>
+                        <!--end::Form-->
                     </div>
+                    <!--end::Card-->
                 </div>
             </div>
-            <!--end::Card-->
         </div>
+        <!--end::Container-->
     </div>
 
 
 {% endblock %}
-
 {% block script %}
     <script>
-
         const formV = FormValidation.formValidation(
             document.getElementById('form'),
             {
@@ -88,7 +91,21 @@
                                 message: 'وارد کردن نام خانوادگی الزامی است!'
                             },
                         }
-                    }
+                    },
+                    code_meli: {
+                        validators: {
+                            notEmpty: {
+                                message: 'وارد کردن کد ملی الزامی است!'
+                            },
+                            callback: {
+                                message: 'کد ملی وارد شده صحیح نمی باشد!',
+                                callback: function (input) {
+                                    return code_meli_valid(input.value)
+                                }
+
+                            }
+                        }
+                    },
                 },
                 plugins: {
                     trigger: new FormValidation.plugins.Trigger(),
@@ -97,32 +114,18 @@
 
             }
         );
-
-        $('#submitter').click(function (e) {
-            console.log('asd')
+        $('.card-footer button').click(function (e) {
             const button = this;
             formV.validate().then(function (status) {
                 if (status === 'Valid') {
-                    {% if self %}
-                        ApiAjax({
-                            success_url: '/',
-                            url: SELF_API_UPDATE_URL,
-                            form: 'form',
-                            method: 'PUT',
-                            button: button,
-                            success_message: 'اطلاعات شما با موفقیت ویرایش شد!'
-                        })
-                    {% else %}
-                        ApiAjax({
-                            success_url: STUDENT_LIST_TEMPLATE,
-                            url: STUDENT_API_UPDATE_URL,
-                            form: 'form',
-                            method: 'PUT',
-                            pk: '{{object.id}}',
-                            button: button,
-                            success_message: 'کاربر ({{ form.first_name.value }} {{ form.last_name.value }}) با موفقیت ویرایش شد!',
-                        })
-                    {% endif %}
+                    ApiAjax({
+                        success_url: PROJECT_LIST_TEMPLATE,
+                        url: PROJECT_API_CREATE_URL,
+                        form: 'form',
+                        method: 'POST',
+                        button: button,
+                        success_message: 'پروژه با موفقیت ایجاد شد!',
+                    })
                 } else {
                     Swal.fire({
                         text: "به نظر می رسد تعدادی خطا در اطلاعات شما وجود دارد، لطفا دوباره تلاش کنید.",
@@ -136,10 +139,6 @@
                     });
                 }
             });
-        });
-        $('select').select2({
-            dir: "rtl",
-            placeholder: 'جهت انتخاب کلیک کنید!'
         });
     </script>
 {% endblock %}

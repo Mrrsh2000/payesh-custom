@@ -422,3 +422,6 @@ const tableToExcel = (function () {
 })();
 
 const regexFA = /^[پچجحخهعغفقثصضشسیبلاتنمآکگوئدذرزطظژؤإأءًٌٍَُِّ\s\n\r\t\d\(\)\[\]\{\}.,،;\-؛]+$/;
+$('select').select2({
+    dir: "rtl"
+});

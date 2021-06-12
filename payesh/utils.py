@@ -20,7 +20,7 @@ from django.shortcuts import redirect
 from django.views import View
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from unidecode import unidecode
 from payesh.logging import log
 
 

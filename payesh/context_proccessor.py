@@ -7,4 +7,6 @@ def p(request):
     return {
         'can_user': request.user.role == 'admin',
         'can_student': request.user.role in ROLES_EXCEPT_STUDENT,
+        'is_student': request.user.role == 'student',
+        'is_teacher': request.user.role == 'teacher',
     }

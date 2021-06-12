@@ -54,7 +54,7 @@ class StudentUpdateView(DynamicUpdateView):
     این کلاس برای ویرایش کاربران کاشف استفاده می شود
     """
     model = User
-    form = user_form(['username', 'first_name', 'last_name', 'role'], update=True)
+    form = user_form(['username', 'first_name', 'last_name', 'code_student', 'code_meli'], update=True)
     success_url = '/student/list'
     template_name = 'student/student_update.html'
     permission_required = ROLES_EXCEPT_STUDENT

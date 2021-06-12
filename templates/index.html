@@ -9,6 +9,11 @@
             <!--begin::Container-->
             <div class="container">
                 <!--begin::Dashboard-->
+                {% if is_student %}
+                    {% include 'index-students.html' %}
+                {% else %}
+                    {% include 'index-users.html' %}
+                {% endif %}
                 <!--begin::Row-->
             </div>
             <!--end::Container-->

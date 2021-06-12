@@ -55,6 +55,11 @@ class StudentCreateSerializer(DynamicSerializer):
         depth = 5
         fields = ['id', 'username', 'first_name', 'last_name', 'role', 'code_student', 'code_meli', 'password']
 
+    def create(self, validated_data):
+        validated_data['password'] = self.validate_password('')
+        validated_data['username'] = self.validate_username('')
+        return super().create(validated_data)
+
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
 
@@ -71,7 +76,6 @@ class StudentCreateSerializer(DynamicSerializer):
         return 'student'
 
     def validate_username(self, value):
-        #TODO: fix UNIQUE
         if User.objects.filter(code_student=self.initial_data['code_student']).exists() or User.objects.filter(username=self.initial_data['code_student']).exists():
             raise CustomValidation('code_student', 'این کد دانشجویی قبلا ثبت شده است!')
         return self.initial_data['code_student']
