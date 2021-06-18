@@ -65,34 +65,3 @@ class User(AbstractUser):
     def teachers():
         return User.objects.exclude(role='student')
 
-
-class Ticket(models.Model):
-    class Meta:
-        verbose_name = 'تیکت'
-        verbose_name_plural = 'تیکت ها'
-
-    title = models.CharField(max_length=255, verbose_name='عنوان')
-    user = models.CharField(max_length=255, verbose_name='دانشجو')
-    teacher = models.CharField(max_length=255, verbose_name='استاد راهنما')
-    created_at = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='تاریخ ایجاد')
-
-    def __str__(self):
-        return self.title
-
-
-class Message(models.Model):
-    class Meta:
-        verbose_name = 'پیام'
-        verbose_name_plural = 'پیام ها'
-
-    text = models.TextField(blank=True, verbose_name='متن پیام')
-    sender = models.CharField(max_length=255, verbose_name='فرستنده')
-    file = models.FileField(blank=True, verbose_name='فایل', validators=[file_size])
-    ticket = models.ForeignKey(Ticket, related_name='message', on_delete=models.CASCADE,
-                               verbose_name='بخش')
-    is_seen = models.BooleanField(blank=True, verbose_name='مشاهده شده')
-    created_at = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='تاریخ ایجاد')
-    updated_at = models.DateTimeField(auto_now=True, blank=True, verbose_name='تاریخ آخرین ویرایش')
-
-    def __str__(self):
-        return self.text
