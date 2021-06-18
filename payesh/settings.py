@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'user.apps.userConfig',
     'logs.apps.LogsConfig',
     'project.apps.ProjectConfig',
+    'ticket.apps.TicketConfig',
 ]
 
 REST_FRAMEWORK = {
@@ -59,7 +60,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

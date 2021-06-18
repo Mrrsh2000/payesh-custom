@@ -1,9 +1,9 @@
-from user.student import StudentViewSet
+from ticket.api import TicketViewSet, MessageViewSet
 from .views import *
 
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register('user', UserViewSet, basename='user')
-router.register('student', StudentViewSet, basename='student')
+router.register('ticket', TicketViewSet, basename='ticket')
+router.register('message', MessageViewSet, basename='message')
 urlpatterns = router.urls
