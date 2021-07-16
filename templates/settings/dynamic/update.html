@@ -47,7 +47,9 @@
         $('.card select').select2({
             dir: "rtl"
         });
+        {#alert('asd');#}
         $('#submitter').click(function (e) {
+            e.preventDefault()
             const button = this;
             ApiAjax({
                 url: '{{ updateApiURL }}',

@@ -35,6 +35,22 @@ const
     STUDENT_LIST_TEMPLATE = '/user/student/list';
 
 
+
+////////////////// TICKET //////////////////
+
+//   // API URLS:
+const TICKET_API_DELETE_URL = API_VERSION + 'ticket/0',
+    TICKET_API_UPDATE_URL = API_VERSION + 'ticket/0',
+    TICKET_API_DATATABLE_URL = API_VERSION + 'ticket/datatable/',
+    TICKET_API_CREATE_URL = API_VERSION + 'ticket/';
+
+
+//  // TEMPLATE URLS:
+const
+    TICKET_UPDATE_TEMPLATE = '/ticket/ticket/update/0',
+    TICKET_LIST_TEMPLATE = '/ticket/ticket/list';
+
+
 ////////////////// PROJECT //////////////////
 
 //   // API URLS:

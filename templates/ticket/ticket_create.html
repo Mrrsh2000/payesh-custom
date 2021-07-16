@@ -13,10 +13,7 @@
                                 {{ model_name }}
                             </h3>
                             <div class="card-toolbar">
-                                <div class="example-tools justify-content-center">
-                                    <span class="example-toggle" data-toggle="tooltip" title="View code"></span>
-                                    <span class="example-copy" data-toggle="tooltip" title="Copy code"></span>
-                                </div>
+                                {% include 'shared/createModal.html' %}
                             </div>
                         </div>
                         <div class="card-body pr-2 pl-2">
@@ -53,14 +50,14 @@
 
         var table = datatable_simple_show({
             {#extras: [naviItem('نمایش پیوست الزام', 'far fa-file-archive', 'pyvast_elzam'), naviItem('اطلاعات محصول', 'fas fa-info', 'info_mahsol_elzam'), naviItem('اطلاعات الزام', 'fas fa-info-circle', 'info_elzam')],#}
-            url: STUDENT_API_DATATABLE_URL,
+            url: TICKET_API_DATATABLE_URL,
             real_cols: {{cols|length}},
             hide_id: true,
             loading_all: true,
             responsive: true,
             datable_id: '#table',
-            del_url: STUDENT_API_DELETE_URL,
-            up_url: STUDENT_UPDATE_TEMPLATE,
+            del_url: TICKET_API_DELETE_URL,
+            up_url: TICKET_UPDATE_TEMPLATE,
             extra_del_params: {
                 ajax: true,
             },
@@ -85,6 +82,18 @@
 
             },
 
+        });
+        $('#submitter').click(function (e) {
+            const button = this;
+            ApiAjax({
+                url: TICKET_API_CREATE_URL,
+                form: 'form',
+                method: 'POST',
+                button: button,
+                table: table,
+                modal: '#modal_here',
+                success_message: 'پیام سیستمی با موفقیت ایجاد شد!',
+            })
         });
     </script>
 {% endblock %}

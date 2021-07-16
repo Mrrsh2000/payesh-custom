@@ -17,7 +17,6 @@ class TicketCreateSerializer(DynamicSerializer):
         fields = ['id', 'user', 'title', 'created_at', 'is_closed', ]
 
     def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
 
 
