@@ -38,6 +38,7 @@ class TicketUpdateView(DynamicUpdateView):
 
 class MessageListView(DynamicListView):
     permission_required = ROLES_ADMIN_TEACHER
+
     model = Message
     datatable_cols = ['#', 'نام کاربری', 'نام', 'نام خانوادگی', 'نقش']
 

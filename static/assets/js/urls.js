@@ -42,6 +42,7 @@ const
 const TICKET_API_DELETE_URL = API_VERSION + 'ticket/0',
     TICKET_API_UPDATE_URL = API_VERSION + 'ticket/0',
     TICKET_API_DATATABLE_URL = API_VERSION + 'ticket/datatable/',
+    MESSAGES_API_URL = API_VERSION + 'messages/0',
     TICKET_API_CREATE_URL = API_VERSION + 'ticket/';
 
 

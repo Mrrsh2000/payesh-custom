@@ -35,6 +35,7 @@ class Message(models.Model):
         verbose_name_plural = 'پیام ها'
         permissions = (
         )
+        ordering = ['-created_at']
 
     ticket = models.ForeignKey('Ticket', related_name='messages', on_delete=models.CASCADE, verbose_name='تیکت')
     text = models.TextField(verbose_name='متن پیام')

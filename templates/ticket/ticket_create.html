@@ -78,7 +78,9 @@
                         $(`td:eq(${value - 1})`, row).html(`<a download href="${data[value]}" class="btn btn-primary btn-circle btn-icon" title="جهت دریافت فایل کلیک کنید"><i class="fa fa-download"></i></a>`)
                 }
                 boldCol(0, row, data[1])
-
+                $(`td:eq(4)`, row).prepend(`
+    <a href="/ticket/ticket/messages/${data[0]}" data-skin="dark" data-toggle="tooltip" data-placement="top" title="" data-original-title="پیام ها" class="btn btn-sm btn-light-primary btn-icon ml-1"><span class="svg-icon svg-icon-md">{% include 'shared/svg/message.html' %}</span></button>
+                `)
 
             },
 
