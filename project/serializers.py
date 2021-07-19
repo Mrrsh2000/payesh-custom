@@ -15,6 +15,7 @@ class ProjectSerializer(DynamicSerializer):
         'self': ['password', 'groups']
     }
 
+
     class Meta:
         model = Project
         extra_kwargs = api_error_creator(Project,

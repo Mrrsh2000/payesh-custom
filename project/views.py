@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.status import HTTP_404_NOT_FOUND
 
 from payesh.dynamic import DynamicCreateView, DynamicListView, DynamicUpdateView
 from payesh.dynamic_api import DynamicModelApi
@@ -39,6 +40,8 @@ class ProjectViewSet(DynamicModelApi):
         return qs
 
     def get_queryset(self):
+        if self.action == 'self':
+            return self.request.user.project()
         return self.queryset
 
     @action(methods=['post'], detail=False, url_path='number/(?P<pk>[^/.]+)')
@@ -75,6 +78,16 @@ class ProjectViewSet(DynamicModelApi):
         return Response({
             'message': 'نمره با موفقیت تغییر یافت!'
         }, status=status.HTTP_201_CREATED)
+
+    @action(methods=['get'], detail=False)
+    def self(self, request, *args, **kwargs):
+        pj = self.request.user.project()
+        if pj:
+            instance = pj
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        else:
+            return Response({},status=HTTP_404_NOT_FOUND)
 
 
 class ProjectListView(DynamicListView):

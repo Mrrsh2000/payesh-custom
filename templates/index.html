@@ -23,11 +23,29 @@
 {% endblock %}
 {% block script %}
 
-    <!--begin::Page Scripts(used by this page)-->
-    <script src="assets/js/pages/widgets.js"></script>
-    <script>
-        ApiAjaxReader({
-            url: SELECT2_CITY,
-            method: 'GET',
-        })</script>
+    <!--begin::Dashboard-->
+    {% if is_student %}
+        {% if request.user.project %}
+            <script>
+                ApiAjax({
+                    url: PROJECT_API_SELF_URL,
+                    method: 'GET',
+                    success_message: false,
+                    success: function (data) {
+                        console.log(data)
+                    }
+                })
+            </script>
+        {% endif %}
+
+    {% else %}
+
+    {% endif %}
+    <!--begin::Row-->
+    {#    <script>#}
+    {#        ApiAjaxReader({#}
+    {#            url: SELECT2_CITY,#}
+    {#            method: 'GET',#}
+    {#        })#}
+    {#    </script>#}
 {% endblock %}
