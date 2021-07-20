@@ -19,13 +19,16 @@ class TicketViewSet(DynamicModelApi):
         'update': ROLES_JUST_ADMIN,
         'destroy': ROLES_JUST_ADMIN,
         'retrieve': ROLES_JUST_ADMIN,
-        'list': ROLES_JUST_ADMIN,
     }
 
     def filter_queryset(self, qs):
+        if self.request.user.is_student():
+            return Ticket.objects.filter(user=self.request.user)
         return super().filter_queryset(qs)
 
     def get_queryset(self):
+        if self.request.user.is_student():
+            return Ticket.objects.filter(user=self.request.user)
         return self.queryset
 
 
