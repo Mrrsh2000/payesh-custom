@@ -4,6 +4,7 @@ const app = new Vue({
         return {
             loading: true,
             messages: [],
+            ticket: {}
         }
     },
     el: '#vue-selector',
@@ -23,6 +24,23 @@ const app = new Vue({
                     console.log(data)
                     this.messages = data.response;
                     this.loading = true;
+                    this.ticket = data.ticket;
+                },
+                error: function (e) {
+                    swalFireError();
+                }
+            })
+        },
+        sendMessage() {
+            const pk = document.getElementById('id_ticket').value;
+            this.loading = true;
+            ApiAjax({
+                url: MESSAGES_API_URL,
+                method: 'POST',
+                success_message: 'با موفقیت ارسال شد',
+                success: (data) => {
+                    document.getElementById('id_ticket').value = pk;
+                    this.getMessages()
                 },
                 error: function (e) {
                     swalFireError();

@@ -1,8 +1,10 @@
+from django.http import JsonResponse, Http404
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 
 from payesh.dynamic_api import DynamicModelApi
 from payesh.settings import ROLES_JUST_ADMIN
+from payesh.utils import custom_change_date
 from ticket.models import Ticket, Message
 from ticket.serializers import TicketCreateSerializer, MessageCreateSerializer
 
@@ -45,10 +47,12 @@ class MessageViewSet(DynamicModelApi):
         # 'messages': ROLES,
     }
 
-    @action(methods=['get'], detail=False, url_path='messages/ticket/(?P<pk>[^/.]+)')
-    def messages(self, request, pk, *args, **kwargs):
+    @action(methods=['get'], detail=False, url_path='ticket/(?P<pk>[^/.]+)')
+    def ticket(self, request, pk, *args, **kwargs):
         ticket = get_object_or_404(Ticket, pk=pk)
-        messages = ticket.messages.all()
+        if ticket.user != self.request.user and self.request.user.is_student():
+            raise Http404()
+        messages = ticket.messages.all().order_by('pk')
         res = [
             {
                 'pk': msg.pk,
@@ -57,12 +61,15 @@ class MessageViewSet(DynamicModelApi):
                 'file': msg.file.url if msg.file else None,
                 'is_seen': msg.is_seen,
                 'is_seen_by_admin': msg.is_seen_by_admin,
-                'created_at': msg.created_at,
+                'created_at': custom_change_date(msg.created_at, 4),
             } for msg in messages
         ]
-        return {
-            'response': res
-        }
+        return JsonResponse({'response': res, 'ticket': {
+            'fullname': ticket.user.get_full_name(),
+            'title': ticket.title,
+            'is_closed': ticket.is_closed,
+            'created_at': custom_change_date(ticket.created_at, 4),
+        }})
 
     def filter_queryset(self, qs):
         return super().filter_queryset(qs)

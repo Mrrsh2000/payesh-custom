@@ -42,6 +42,10 @@ class MessageListView(DynamicListView):
     model = Message
     datatable_cols = ['#', 'نام کاربری', 'نام', 'نام خانوادگی', 'نقش']
 
+    def get_extra_context(self, context):
+        context['pk'] = self.kwargs['pk']
+        return super().get_extra_context(context)
+
 
 class MessageCreateView(DynamicCreateView):
     model = Message
