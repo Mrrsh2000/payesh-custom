@@ -37,6 +37,7 @@ const app = new Vue({
             ApiAjax({
                 url: MESSAGES_API_URL,
                 method: 'POST',
+                file: true,
                 success_message: 'با موفقیت ارسال شد',
                 success: (data) => {
                     document.getElementById('id_ticket').value = pk;

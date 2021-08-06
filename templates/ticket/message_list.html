@@ -83,16 +83,18 @@
                             <form method="post" id="form-send-message" @submit.prevent="sendMessage">
                                 {% csrf_token %}
                                 <!--begin::Compose-->
+                                <label class="col-form-label font-weight-bolder text-right w-100">متن پیام:</label>
                                 <input type="text" id="id_ticket" name="ticket" value="{{ pk }}" class="d-none">
                                 <textarea class="form-control border-1 p-5" id="id_text" name="text" rows="5"
                                           placeholder="پیام خود را وارد کنید"></textarea>
                                 <div class="d-flex align-items-center justify-content-between mt-5">
-                                    <div class="mr-3">
-
+                                    <div class="mr-3 d-flex align-items-center font-weight-bolder">
+                                        پیوست:
+                                        <input type="file" class="form-control mr-2" placeholder="پیوست فایل" name="file" id="id_file">
                                     </div>
                                     <div>
                                         <button type="submit"
-                                                class="btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6">
+                                                class="btn btn-primary text-uppercase font-weight-bold py-2 px-6">
                                             ارسال
                                         </button>
                                     </div>
