@@ -17,7 +17,6 @@ class TicketViewSet(DynamicModelApi):
     serializer_class = TicketCreateSerializer
     custom_perms = {
         'datatable': ROLES_JUST_ADMIN,
-        'create': ROLES_JUST_ADMIN,
         'update': ROLES_JUST_ADMIN,
         'destroy': ROLES_JUST_ADMIN,
         'retrieve': ROLES_JUST_ADMIN,

@@ -17,6 +17,10 @@ class TicketCreateSerializer(DynamicSerializer):
         fields = ['id', 'user', 'title', 'created_at', 'is_closed', ]
 
     def create(self, validated_data):
+        user = self.context['request'].user
+        if user.is_student():
+            validated_data['user'] = user
+        validated_data['is_closed'] = False
         return super().create(validated_data)
 
 
@@ -29,8 +33,8 @@ class MessageCreateSerializer(DynamicSerializer):
         extra_kwargs = api_error_creator(Message,
                                          ['ticket', 'text', 'user', 'file', 'is_seen', 'is_seen_by_admin',
                                           'created_at', ],
-                                         blank_fields=['ticket', 'user'],
-                                         required_fields=[])
+                                         blank_fields=['user'],
+                                         required_fields=['ticket'])
         depth = 5
         fields = ['id', 'ticket', 'text', 'user', 'file', 'is_seen', 'is_seen_by_admin', 'created_at', ]
 

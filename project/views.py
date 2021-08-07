@@ -5,7 +5,7 @@ from rest_framework.status import HTTP_404_NOT_FOUND
 
 from payesh.dynamic import DynamicCreateView, DynamicListView, DynamicUpdateView
 from payesh.dynamic_api import DynamicModelApi
-from payesh.settings import ROLES_EXCEPT_STUDENT, ROLES_ADMIN_TEACHER
+from payesh.settings import ROLES_EXCEPT_STUDENT, ROLES_ADMIN_TEACHER, ROLES_JUST_ADMIN, ROLES_ADMIN_EDUCATION
 from project.models import Project
 from project.serializers import ProjectSerializer
 from user.models import User
@@ -31,10 +31,13 @@ class ProjectViewSet(DynamicModelApi):
         'destroy': ROLES_EXCEPT_STUDENT,
         'retrieve': ROLES_EXCEPT_STUDENT,
         'list': ROLES_EXCEPT_STUDENT,
+        'education': ROLES_ADMIN_EDUCATION,
     }
 
     def filter_queryset(self, qs):
         qs = super().filter_queryset(qs)
+        if self.action == 'education':
+            return qs.filter(is_ready=True)
         if self.request.user.is_teacher():
             return qs.filter(teacher=self.request.user)
         return qs
@@ -87,7 +90,11 @@ class ProjectViewSet(DynamicModelApi):
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         else:
-            return Response({},status=HTTP_404_NOT_FOUND)
+            return Response({}, status=HTTP_404_NOT_FOUND)
+
+    @action(methods=['get', 'post'], detail=False)
+    def education(self, request, *args, **kwargs):
+        return self.datatable(request, *args, **kwargs)
 
 
 class ProjectListView(DynamicListView):
@@ -146,3 +153,10 @@ class ProjectUpdateView(DynamicUpdateView):
         context['form'].fields['user'].queryset = User.students().filter(projects__isnull=True) | User.objects.filter(
             pk=self.get_object().user.pk)
         return super().get_extra_context(context)
+
+
+class ProjectEducationListView(DynamicListView):
+    permission_required = ROLES_ADMIN_EDUCATION
+    model = Project
+    datatable_cols = ['#', 'عنوان', 'کد پروژه', 'تاریخ شروع', 'تاریخ پایان', 'نمره', 'استاد راهنما', 'دانشجو',
+                      'آماده ثبت نمره', 'خاتمه یافته', 'تاریخ ایجاد', ]

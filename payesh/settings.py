@@ -203,6 +203,7 @@ JWT_AUTH = {
 
 ROLES_EXCEPT_STUDENT = ['admin', 'education', 'teacher']
 ROLES_JUST_ADMIN = ['admin', ]
+ROLES_JUST_EDUCATION = ['education', ]
 ROLES_ADMIN_TEACHER = ['admin', 'teacher']
 ROLES_ADMIN_EDUCATION = ['admin', 'education']
 ROLES_ALL = ['admin', 'education', 'teacher', 'student']
