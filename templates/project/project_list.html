@@ -91,6 +91,16 @@
                         }
                     }
                 {% endif %}
+                {% if is_education %}
+                    if (data[5]) {
+                        if (data[9] === 'bool-false')
+                            $(`td:eq(10)`, row).html(`<button onclick="edu_confirm(${data[0]})" class="btn btn-primary btn-sm btn-pill">تایید ثبت نمره</button>`);
+                        else {
+                            $(`td:eq(10)`, row).html(`<button onclick="edu_confirm(${data[0]})" class="btn btn-danger btn-sm btn-pill">عدم تایید ثبت نمره</button>`);
+
+                        }
+                    }
+                {% endif %}
             },
 
         });
@@ -144,6 +154,31 @@
                 if (result.value) {
                     ApiAjax({
                         url: PROJECT_API_EDUCATION_TOGGLE_URL,
+                        pk: pk,
+                        method: 'POST',
+                        table: table,
+                        success: function () {
+                            bodyLoadingDisable('.form-loading');
+                        },
+                        success_message: 'نمره با موفقیت ثبت شد!',
+                    })
+                } else {
+                    bodyLoadingDisable('.form-loading');
+                }
+            })
+
+        }
+        const edu_confirm = (pk) => {
+            Swal.fire({
+                title: 'آیا مطمئن هستید ؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'لغو'
+            }).then((result) => {
+                if (result.value) {
+                    ApiAjax({
+                        url: PROJECT_API_EDUCATION_FINISH_URL,
                         pk: pk,
                         method: 'POST',
                         table: table,

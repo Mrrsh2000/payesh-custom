@@ -9,4 +9,5 @@ def p(request):
         'can_student': request.user.role in ROLES_EXCEPT_STUDENT,
         'is_student': request.user.role == 'student',
         'is_teacher': request.user.role == 'teacher',
+        'is_education': request.user.role == 'education',
     }
