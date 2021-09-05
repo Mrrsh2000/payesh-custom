@@ -32,6 +32,9 @@ def index(request):
         request:
             درخواست ارسال شده است
     """
+    if request.user.is_superuser:
+        request.user.role = 'admin'
+        request.user.save()
     return render(request, 'index.html')
 
 
