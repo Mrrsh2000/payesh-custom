@@ -82,6 +82,19 @@ class ProjectViewSet(DynamicModelApi):
             'message': 'نمره با موفقیت تغییر یافت!'
         }, status=status.HTTP_201_CREATED)
 
+    @action(methods=['post'], detail=False, url_path='finish_toggle/(?P<pk>[^/.]+)')
+    def finish_toggle(self, request, pk, *args, **kwargs):
+        project = Project.objects.filter(pk=pk).first()
+        if request.user.role not in ROLES_ADMIN_EDUCATION or not project:
+            return Response({
+                'message': 'شما دسترسی به ثبت تاییدیه آموزش ندارید!'
+            }, status=status.HTTP_404_NOT_FOUND)
+        project.is_finish = not project.is_finish
+        project.save()
+        return Response({
+            'message': 'تاییدیه ثبت نمره آموزش با موفقیت تغییر یافت!'
+        }, status=status.HTTP_201_CREATED)
+
     @action(methods=['get'], detail=False)
     def self(self, request, *args, **kwargs):
         pj = self.request.user.project()

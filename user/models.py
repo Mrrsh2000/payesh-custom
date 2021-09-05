@@ -63,5 +63,5 @@ class User(AbstractUser):
 
     @staticmethod
     def teachers():
-        return User.objects.exclude(role='student')
+        return User.objects.filter(role='teacher')
 

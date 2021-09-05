@@ -59,6 +59,7 @@ const PROJECT_API_DELETE_URL = API_VERSION + 'project/0',
     PROJECT_API_UPDATE_URL = API_VERSION + 'project/0',
     PROJECT_API_NUMBER_URL = API_VERSION + 'project/number/0',
     PROJECT_API_EDUCATION_TOGGLE_URL = API_VERSION + 'project/edu_toggle/0',
+    PROJECT_API_EDUCATION_FINISH_URL = API_VERSION + 'project/finish_toggle/0',
     PROJECT_API_DATATABLE_URL = API_VERSION + 'project/datatable/',
     PROJECT_API_SELF_URL = API_VERSION + 'project/self/',
     PROJECT_API_CREATE_URL = API_VERSION + 'project/';
